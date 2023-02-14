@@ -33,10 +33,6 @@ class GameScoreManager {
         }
     }
 
-    fun addScore(points: Int) {
-        score += points
-    }
-
     fun getScore(): Int {
         return score
     }

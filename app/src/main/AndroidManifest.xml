@@ -25,9 +25,20 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".ScoreBoardActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.myapp.SCOREBOARD" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
     </application>

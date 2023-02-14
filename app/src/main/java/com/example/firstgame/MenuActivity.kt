@@ -12,7 +12,7 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 
         val gameplay = findViewById<Button>(R.id.gameplaybutton)
-        val button2 = findViewById<Button>(R.id.button2)
+        val scoreBoard = findViewById<Button>(R.id.ScoreBoardButton)
         val button3 = findViewById<Button>(R.id.button3)
 
         gameplay.setOnClickListener {
@@ -22,8 +22,10 @@ class MenuActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        button2.setOnClickListener {
+        scoreBoard.setOnClickListener {
             // Add code for what should happen when button 2 is clicked
+            val intent = Intent(this, ScoreBoardActivity::class.java)
+            startActivity(intent)
         }
 
         button3.setOnClickListener {
