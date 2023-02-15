@@ -1,9 +1,11 @@
 package com.example.firstgame
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 class ScoreBoardActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -16,8 +18,9 @@ class ScoreBoardActivity : AppCompatActivity() {
 
         // Initialize scores list
         scoresList = mutableListOf()
-        for (i in 1..10) {
-            scoresList.add(ScoreboardItem("Player $i", (i * 1000), "Feb 14, 2023"))
+        for (i in 1..20) {
+            val currentDate = Date()
+            scoresList.add(ScoreboardItem("Player $i", (i * 1000),currentDate))
         }
 
         // Set up recycler view
@@ -25,6 +28,12 @@ class ScoreBoardActivity : AppCompatActivity() {
         scoreboardAdapter = ScoreBoardAdapter(scoresList)
         recyclerView.adapter = scoreboardAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Set up back button
+        val backButton = findViewById<Button>(R.id.scoreboard_back_button)
+        backButton.setOnClickListener {
+            finish() // Return to previous activity
+        }
     }
 }
 

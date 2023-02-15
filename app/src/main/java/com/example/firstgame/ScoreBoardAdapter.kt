@@ -18,8 +18,8 @@ class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val score = scores[position]
-        holder.scoreView.text = score.getScore().toString()
-        holder.timeView.text = formatElapsedTime(score.getElapsedTime())
+        holder.scoreView.text = score.score.toString()
+        holder.timeView.text = score.formatDate()
     }
 
     private fun formatElapsedTime(elapsedTime: Long): String {
@@ -28,8 +28,9 @@ class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val scoreView: TextView = itemView.findViewById(R.id.scoreboard_score)
         val timeView: TextView = itemView.findViewById(R.id.scoreboard_date)
     }
 }
+
