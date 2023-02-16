@@ -1,5 +1,6 @@
 package com.example.firstgame
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -7,10 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class ScoreBoardActivity : AppCompatActivity() {
+class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
     private lateinit var recyclerView: RecyclerView
     private lateinit var scoreboardAdapter: ScoreBoardAdapter
-    private lateinit var scoresList: MutableList<ScoreboardItem>
+    public  lateinit var scoresList: MutableList<ScoreboardItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +35,12 @@ class ScoreBoardActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish() // Return to previous activity
         }
+    }
+
+    fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("myList", scoresList as java.io.Serializable)
+        startActivity(intent)
     }
 }
 

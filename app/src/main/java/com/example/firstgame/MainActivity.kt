@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var obstacle: LinearLayout? = null
     private var obstacle1: LinearLayout? = null
 
+    private var scoreList = mutableListOf<ScoreboardItem>()
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
 
+        if (intent.hasExtra("myList")) {
+            scoreList = intent.getSerializableExtra("myList") as MutableList<ScoreboardItem>
+        }
+
         val button_test = findViewById<Button>(R.id.test_email_button)
         button_test.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
@@ -75,10 +81,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_layout)
 
+        //get the last element of the score list and the score of that last element
+        // TODO this shit doesnt work
+//        val latest_score = scoreList.last().score
+
         // Set up click listeners for any buttons in the pop-up window
         val button1 = dialog.findViewById<Button>(R.id.share_score)
         val button2 = dialog.findViewById<Button>(R.id.cancel_button)
         val text_score = dialog.findViewById<TextView>(R.id.text_score)
+//        text_score.text = "Score: " + latestScore.toString()
+
 
         button1.setOnClickListener {
             // Do something when button 1 is clicked
