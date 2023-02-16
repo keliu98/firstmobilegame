@@ -1,6 +1,8 @@
 package com.example.firstgame
 
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.hardware.Sensor
@@ -18,7 +20,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.graphics.Camera
 import android.graphics.Matrix
+import android.net.Uri
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var xPos = 0f
@@ -58,6 +63,41 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
+
+        val button_test = findViewById<Button>(R.id.test_email_button)
+        button_test.setOnClickListener {
+            // Add code for what should happen when button 1 is clicked
+            showDialog(button_test)
+        }
+    }
+
+    private fun showDialog(viewWhenClicked: View) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.popup_layout)
+
+        // Set up click listeners for any buttons in the pop-up window
+        val button1 = dialog.findViewById<Button>(R.id.share_score)
+        val button2 = dialog.findViewById<Button>(R.id.cancel_button)
+        val text_score = dialog.findViewById<TextView>(R.id.text_score)
+
+        button1.setOnClickListener {
+            // Do something when button 1 is clicked
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("recipient@example.com")) // Set the email address of the recipient
+                putExtra(Intent.EXTRA_SUBJECT, "My latest score") // Set the subject of the email
+                putExtra(Intent.EXTRA_TEXT, text_score.text) // Set the body of the email
+            }
+            startActivity(intent)
+        }
+
+        button2.setOnClickListener {
+            // Do something when button 2 is clicked
+            dialog.dismiss() // Close the dialog when done
+        }
+
+        dialog.show()
     }
 
     override fun onStart() {
