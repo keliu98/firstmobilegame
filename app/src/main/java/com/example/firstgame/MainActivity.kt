@@ -21,9 +21,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.graphics.Camera
 import android.graphics.Matrix
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var xPos = 0f
@@ -39,13 +43,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var obstacle: LinearLayout? = null
     private var obstacle1: LinearLayout? = null
 
-    private var scoreList = mutableListOf<ScoreboardItem>()
+    private lateinit var scoreView : ScoreBoardViewModel
+
+    //private var scoreList = LiveData<List<ScoreboardItem>>()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+        scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
+
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -66,9 +75,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
 
-        if (intent.hasExtra("myList")) {
-            scoreList = intent.getSerializableExtra("myList") as MutableList<ScoreboardItem>
-        }
 
         val button_test = findViewById<Button>(R.id.test_email_button)
         button_test.setOnClickListener {
@@ -81,16 +87,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_layout)
 
+
+
         //get the last element of the score list and the score of that last element
-        // TODO this shit doesnt work
-//        val latest_score = scoreList.last().score
+
+        //Log.d("Last Score Item: ", lastScoreItem.value?.score.toString())
 
         // Set up click listeners for any buttons in the pop-up window
         val button1 = dialog.findViewById<Button>(R.id.share_score)
         val button2 = dialog.findViewById<Button>(R.id.cancel_button)
         val text_score = dialog.findViewById<TextView>(R.id.text_score)
-//        text_score.text = "Score: " + latestScore.toString()
 
+        scoreView.lastScoreItem.observe(this) {
+            text_score.text = "Score: " + scoreView.lastScoreItem.value?.score.toString()
+        }
 
         button1.setOnClickListener {
             // Do something when button 1 is clicked

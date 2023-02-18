@@ -19,13 +19,23 @@ class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val score = scores[position]
         holder.scoreView.text = score.score.toString()
-        holder.timeView.text = score.formatDate()
+        holder.timeView.text = score.date
     }
 
     private fun formatElapsedTime(elapsedTime: Long): String {
         val minutes = (elapsedTime / 1000) / 60
         val seconds = (elapsedTime / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    fun setScoreBoardWithIndex(scorelist: List<ScoreboardItem>) {
+        this.scores.clear()
+        this.scores.addAll(scorelist)
+        for (i in scorelist.indices) {
+            scorelist[i].uid = (scorelist.size-i).toLong()
+        }
+        this.scores.sortBy { it.uid }
+        this.notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
