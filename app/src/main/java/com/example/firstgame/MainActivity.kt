@@ -28,6 +28,10 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var xPos = 0f
@@ -44,6 +48,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var obstacle1: LinearLayout? = null
 
     private lateinit var scoreView : ScoreBoardViewModel
+    private var currentScore = 0
 
     //private var scoreList = LiveData<List<ScoreboardItem>>()
 
@@ -65,12 +70,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         obstacle = findViewById<View>(R.id.obstacle) as LinearLayout
 
         val root = findViewById<View>(R.id.main_layout) as ConstraintLayout
+
         root.setOnTouchListener { view, event ->
             if (ballIsOnTheGround() || ballIsOnTheObstacle()) {
                 yVelocity = -40f
             }
+            AddScore(100)
+            Log.d("JUMP", "jumping and adding score")
             true
         }
+
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
@@ -84,6 +93,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     }
 
+    /**
+     * Adds score whenever you want
+     */
+    private fun AddScore(scoreToAdd :Int){
+        currentScore += scoreToAdd
+    }
+
     private fun showDialog(viewWhenClicked: View) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_layout)
@@ -95,7 +111,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         //Database ALWAYS returns LiveData, and hence an observer is always needed to read LiveData.
         scoreView.lastScoreItem.observe(this) {
-            text_score.text = "Score: " + scoreView.lastScoreItem.value?.score.toString()
+            var scoreToDisplay = ""
+            if(currentScore == 0){
+                //Game hasnt started yet, display last score
+                scoreToDisplay = scoreView.lastScoreItem.value?.score.toString()
+                if(scoreToDisplay == "null")
+                {
+                    //if last score is null, also put 0
+                    scoreToDisplay = 0.toString()
+                }
+            }
+            else{
+                scoreToDisplay = currentScore.toString()
+            }
+            text_score.text = "Score: " + scoreToDisplay
         }
 
         button1.setOnClickListener {
@@ -129,6 +158,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onStop() {
         sensorManager!!.unregisterListener(this)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
+            scoreView.insert(finalScore)
+        }
+
         super.onStop()
     }
 

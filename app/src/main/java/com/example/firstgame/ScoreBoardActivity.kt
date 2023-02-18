@@ -30,28 +30,28 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
 
         // Initialize scores list
         scoresList = mutableListOf()
-
-        for (i in 1..20) {
-            val currentDate = Date()
-            scoresList.add(
-                ScoreboardItem(
-                name ="Player $i",
-                score = (i * 1000),
-                date = formatDate(currentDate)
-                )
-            )
-        }
-
-        /**
-         * Inserts scores into database
-         */
-        for(i in 0 until scoresList.size)
-        {
-            Log.d("Add Score Item: ", scoresList[i].score.toString() )
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.insert(scoresList[i])
-            }
-        }
+//
+//        for (i in 1..20) {
+//            val currentDate = Date()
+//            scoresList.add(
+//                ScoreboardItem(
+//                name ="Player $i",
+//                score = (i * 1000),
+//                date = formatDate(currentDate)
+//                )
+//            )
+//        }
+//
+//        /**
+//         * Inserts scores into database
+//         */
+//        for(i in 0 until scoresList.size)
+//        {
+//            Log.d("Add Score Item: ", scoresList[i].score.toString() )
+//            CoroutineScope(Dispatchers.IO).launch {
+//                viewModel.insert(scoresList[i])
+//            }
+//        }
 
         // Set up recycler view
         recyclerView = findViewById(R.id.score_cycle)
