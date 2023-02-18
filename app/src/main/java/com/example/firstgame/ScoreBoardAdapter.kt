@@ -28,6 +28,9 @@ class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
         return String.format("%02d:%02d", minutes, seconds)
     }
 
+    /**
+     * Sorts scoreboard by id.
+     */
     fun setScoreBoardWithIndex(scorelist: List<ScoreboardItem>) {
         this.scores.clear()
         this.scores.addAll(scorelist)

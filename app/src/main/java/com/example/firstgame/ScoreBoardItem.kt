@@ -16,8 +16,12 @@ data class ScoreboardItem(
     var uid: Long = 0,
     val name: String,
     val score: Int,
+    //Store as a string to prevent future complications. Basic Data Types are always easier.
     val date: String
 ) {
+
+    //Removed for now as it is up to user to convert Date to string.
+
 //    fun formatDate(): String {
 //        val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
 //        return formatter.format(date)

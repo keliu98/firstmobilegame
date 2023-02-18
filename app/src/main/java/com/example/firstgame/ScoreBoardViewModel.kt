@@ -22,18 +22,17 @@ class ScoreBoardViewModel (application: Application) : AndroidViewModel(applicat
         allData = repository.allData
     }
 
-
     /**
      * Calls the insert function in repository
      */
-    suspend fun insert(scoreItem: ScoreboardItem) {
+    fun insert(scoreItem: ScoreboardItem) {
         repository.insert(scoreItem)
     }
 
     /**
      * Calls the delete all function in repository
      */
-    suspend fun deleteAllFourDigit() {
+    fun deleteAllScores() {
         repository.deleteAll()
     }
 }

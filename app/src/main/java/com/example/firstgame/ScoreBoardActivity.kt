@@ -51,8 +51,6 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
             }
         }
 
-
-
         // Set up recycler view
         recyclerView = findViewById(R.id.score_cycle)
         scoreboardAdapter = ScoreBoardAdapter(scoresList)
@@ -65,6 +63,7 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
             finish() // Return to previous activity
         }
 
+        //Database ALWAYS returns LiveData, and hence an observer is always needed to read LiveData.
         viewModel.allData.observe(this) {
             scoreboardAdapter.setScoreBoardWithIndex(it)
         }
@@ -76,6 +75,9 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
 //        startActivity(intent)
 //    }
 
+    /**
+     * Helper function to convert Data to String.
+     */
     fun formatDate(date: Date): String {
         val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
         return formatter.format(date)

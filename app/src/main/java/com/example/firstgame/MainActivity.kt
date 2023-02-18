@@ -87,17 +87,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_layout)
 
-
-
-        //get the last element of the score list and the score of that last element
-
-        //Log.d("Last Score Item: ", lastScoreItem.value?.score.toString())
-
         // Set up click listeners for any buttons in the pop-up window
         val button1 = dialog.findViewById<Button>(R.id.share_score)
         val button2 = dialog.findViewById<Button>(R.id.cancel_button)
         val text_score = dialog.findViewById<TextView>(R.id.text_score)
 
+        //Database ALWAYS returns LiveData, and hence an observer is always needed to read LiveData.
         scoreView.lastScoreItem.observe(this) {
             text_score.text = "Score: " + scoreView.lastScoreItem.value?.score.toString()
         }
