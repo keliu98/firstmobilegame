@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             // Add code for what should happen when button 1 is clicked
             showDialog(button_test)
         }
+
     }
 
     private fun showDialog(viewWhenClicked: View) {

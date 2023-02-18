@@ -63,6 +63,15 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
             finish() // Return to previous activity
         }
 
+        // Set up back button
+        val resetButton = findViewById<Button>(R.id.scoreboard_reset_button)
+        resetButton.setOnClickListener {
+            //ALWAYS do a Coroutine Scope, Room crashes otherwise!
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.deleteAllScores()
+            }
+        }
+
         //Database ALWAYS returns LiveData, and hence an observer is always needed to read LiveData.
         viewModel.allData.observe(this) {
             scoreboardAdapter.setScoreBoardWithIndex(it)
