@@ -24,6 +24,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import java.util.*
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var xPos = 0f
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var ground: LinearLayout? = null
     private var obstacle: LinearLayout? = null
     private var obstacle1: LinearLayout? = null
+
+    private lateinit var database: ScoreDatabase
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +72,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             // Add code for what should happen when button 1 is clicked
             showDialog(button_test)
         }
+
+        // Initialize the database
+        database = ScoreDatabase(this)
+
+
     }
 
     private fun showDialog(viewWhenClicked: View) {
@@ -110,6 +118,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onStop() {
+        // Add a score to the database
+        val score = ScoreboardItem("John Doe", 100, Date())
+        database.addScore(score)
+
         sensorManager!!.unregisterListener(this)
         super.onStop()
     }

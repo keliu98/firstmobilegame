@@ -10,10 +10,13 @@ class MenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
-
+        lateinit var database: ScoreDatabase
         val gameplay = findViewById<Button>(R.id.gameplaybutton)
         val scoreBoard = findViewById<Button>(R.id.ScoreBoardButton)
         val button3 = findViewById<Button>(R.id.button3)
+
+        // Initialize the database
+        database = ScoreDatabase(this)
 
         gameplay.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
@@ -30,6 +33,7 @@ class MenuActivity : AppCompatActivity() {
 
         button3.setOnClickListener {
             // Add code for what should happen when button 3 is clicked
+            database.clearAllScores() // tmp to clear database
         }
     }
 }

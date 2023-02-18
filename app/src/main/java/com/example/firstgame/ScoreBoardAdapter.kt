@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
+class ScoreBoardAdapter(private val scores: List<ScoreboardItem>) :
     RecyclerView.Adapter<ScoreBoardAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -18,19 +18,14 @@ class ScoreBoardAdapter(private val scores: MutableList<ScoreboardItem>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val score = scores[position]
+        holder.nameView.text = score.name
         holder.scoreView.text = score.score.toString()
-        holder.timeView.text = score.formatDate()
-    }
-
-    private fun formatElapsedTime(elapsedTime: Long): String {
-        val minutes = (elapsedTime / 1000) / 60
-        val seconds = (elapsedTime / 1000) % 60
-        return String.format("%02d:%02d", minutes, seconds)
+        holder.dateView.text = score.date.toString()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val nameView: TextView = itemView.findViewById(R.id.scoreboard_name)
         val scoreView: TextView = itemView.findViewById(R.id.scoreboard_score)
-        val timeView: TextView = itemView.findViewById(R.id.scoreboard_date)
+        val dateView: TextView = itemView.findViewById(R.id.scoreboard_date)
     }
 }
-
