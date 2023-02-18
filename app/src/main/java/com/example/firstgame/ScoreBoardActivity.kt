@@ -1,6 +1,7 @@
 package com.example.firstgame
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -25,6 +26,7 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scoreboard)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         // Initialize scores list
         scoresList = mutableListOf()
