@@ -47,11 +47,15 @@
         android:id="@+id/test_email_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
-        android:layout_marginBottom="264dp"
+        android:layout_marginStart="608dp"
+        android:layout_marginBottom="308dp"
         android:text="test_Email"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.058"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.29" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
