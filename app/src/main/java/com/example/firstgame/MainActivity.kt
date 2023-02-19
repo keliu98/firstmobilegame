@@ -16,6 +16,10 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.net.Uri
+<<<<<<< Updated upstream
+=======
+import android.os.SystemClock
+>>>>>>> Stashed changes
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -25,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private var xPos = 0f
@@ -37,8 +42,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var sensorManager: SensorManager? = null
     private var ball: ImageView? = null
     private var ground: LinearLayout? = null
-    private var obstacle: LinearLayout? = null
-    private var obstacle1: LinearLayout? = null
+
 
     private lateinit var scoreView : ScoreBoardViewModel
     private var currentScore = 0
@@ -47,6 +51,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+        //Time.startTime = SystemClock.elapsedRealtime().toFloat()
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -54,18 +61,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
 
         this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
+            WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ball = findViewById<View>(R.id.ball) as ImageView
         ground = findViewById<View>(R.id.ground) as LinearLayout
-        obstacle = findViewById<View>(R.id.obstacle) as LinearLayout
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         val root = findViewById<View>(R.id.main_layout) as ConstraintLayout
 
         root.setOnTouchListener { view, event ->
-            if (ballIsOnTheGround() || ballIsOnTheObstacle()) {
+            if (ballIsOnTheGround()) {
                 yVelocity = -40f
             }
             AddScore(100)
@@ -92,6 +101,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun AddScore(scoreToAdd :Int){
         currentScore += scoreToAdd
     }
+
 
     private fun showDialog(viewWhenClicked: View) {
         val dialog = Dialog(this)
@@ -125,7 +135,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
 
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("recipient@example.com")) // Set the email address of the recipient
+                putExtra(
+                    Intent.EXTRA_EMAIL, arrayOf("recipient@example.com")
+                ) // Set the email address of the recipient
                 putExtra(Intent.EXTRA_SUBJECT, "My latest score") // Set the subject of the email
                 putExtra(Intent.EXTRA_TEXT, text_score.text) // Set the body of the email
             }
@@ -163,6 +175,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onStop()
     }
 
+
+
     override fun onSensorChanged(sensorEvent: SensorEvent) {
         updateXAccel(sensorEvent)
         updateX()
@@ -172,6 +186,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         rotation += xVelocity / 2.5f
         ball!!.rotation = rotation
     }
+
+
 
     fun updateXAccel(sensorEvent: SensorEvent) {
         xAcceleration = -sensorEvent.values[1]
@@ -185,12 +201,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         } else if (ballLeftSideWithSpeed() < 0) {
             xVelocity = 0f
             xPos = xVelocity
-        } else if (ballIsHittingTheObstacleFromLeft() && ballBottomSide() > obstacleTopSide()) {
-            xPos = obstacleLeftSide() - ball!!.width
-            xVelocity = 0f
-        } else if (ballIsHittingTheObstacleFromRight() && ballBottomSide() > obstacleTopSide()) {
-            xPos = obstacleRightSide()
-            xVelocity = 0f
         } else {
             xPos += xVelocity
         }
@@ -200,26 +210,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (ballIsHittingTheGround()) {
             yPos = ground!!.y - ball!!.height
             yVelocity = 0f
-        } else if (ballIsHittingTheObstacleFromTop() && ballRightSideWithSpeed() > obstacleLeftSide() && ballLeftSideWithSpeed() < obstacleRightSide()) {
-            yPos = obstacleTopSide() - ball!!.height
-            yVelocity = 0f
-        } else {
+        }
+        else {
             yPos += yVelocity
-            yVelocity += 2f
+            yVelocity += 1.5f //gravity
         }
     }
 
-    private fun obstacleTopSide(): Float {
-        return obstacle!!.y
-    }
-
-    private fun obstacleRightSide(): Float {
-        return obstacle!!.x + obstacle!!.width
-    }
-
-    private fun obstacleLeftSide(): Float {
-        return obstacle!!.x
-    }
 
     private fun ballRightSide(): Float {
         return xPos + ball!!.width
@@ -245,28 +242,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         return ballBottomSide() == ground!!.y
     }
 
-    private fun ballIsOnTheObstacle(): Boolean {
-        return ballIsHittingTheObstacleFromTop() &&
-                (ballIsHittingTheObstacleFromLeft() || ballIsHittingTheObstacleFromRight())
-    }
-
     private fun ballIsHittingTheGround(): Boolean {
         return ballBottomSideWithSpeed() > ground!!.y
-    }
-
-    private fun ballIsHittingTheObstacleFromTop(): Boolean {
-        return ballBottomSide() <= obstacleTopSide() &&
-                ballBottomSideWithSpeed() >= obstacleTopSide()
-    }
-
-    private fun ballIsHittingTheObstacleFromLeft(): Boolean {
-        return ballRightSideWithSpeed() > obstacleLeftSide() &&
-                ballLeftSideWithSpeed() < obstacleLeftSide()
-    }
-
-    private fun ballIsHittingTheObstacleFromRight(): Boolean {
-        return ballLeftSideWithSpeed() < obstacleRightSide() &&
-                ballRightSideWithSpeed() > obstacleRightSide()
     }
 
 
