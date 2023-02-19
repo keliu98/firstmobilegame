@@ -14,17 +14,25 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
+import java.util.*
+import kotlin.random.Random
 
 class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
     var Time: Time = Time()
-
-    var sprite: Sprite = Sprite(100f,100f)
-    var rb: RigidBody = RigidBody(2500f,850f,-550f)
-    var obstacle = GameObject(rb,sprite)
+    var noOfObstaclePool = 5
+    var obstacles = mutableListOf<GameObject>()
 
     init{
+        for (i in 0 until noOfObstaclePool)
+        {
+            var sprite: Sprite = Sprite(100f,100f)
 
+            //setting xPos to -1 forces spawner to respawn object at random places on start
+            var rb: RigidBody = RigidBody(-1f,850f,-550f)
+            var obstacle = GameObject(rb,sprite)
+            obstacles.add(obstacle)
+        }
     }
 
     private val paint = Paint().apply {
@@ -47,8 +55,24 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
     private fun GameLoop(canvas: Canvas)
     {
-        obstacle.Update(Time.deltaTime, 1)
-        canvas.drawRect(obstacle.sprite.rectangle, obstacle.sprite.paint)
+        //Spawner
+        for(i in 0 until obstacles.size)
+        {
+            if(obstacles[i].rigidBody.xPos < 0)
+            {
+                obstacles[i].rigidBody.xPos = Random.nextInt(2000,9999).toFloat()
+            }
+        }
+
+        Log.d("Obstacle xPos: ", obstacles[0].rigidBody.xPos.toString())
+
+
+        for(i in 0 until obstacles.size)
+        {
+            obstacles[i].Update(Time.deltaTime, 1)
+            canvas.drawRect(obstacles[i].sprite.rectangle, obstacles[i].sprite.paint)
+        }
+
     }
 
     override fun onAttachedToWindow() {

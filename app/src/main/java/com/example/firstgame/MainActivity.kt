@@ -66,12 +66,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         val root = findViewById<View>(R.id.main_layout) as ConstraintLayout
 
+        val currentScoreText = findViewById<TextView>(R.id.currentScore)
+        currentScoreText.text = "Score: " + currentScore.toString()
+
         root.setOnTouchListener { view, event ->
             if (ballIsOnTheGround()) {
                 yVelocity = -40f
             }
             AddScore(100)
             Log.d("JUMP", "jumping and adding score")
+            currentScoreText.text = "Score: " + currentScore.toString()
             true
         }
 
@@ -80,11 +84,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         screenWidth = displayMetrics.widthPixels.toFloat()
 
 
+
         val button_test = findViewById<Button>(R.id.test_email_button)
         button_test.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
             showDialog(button_test)
         }
+
+
 
     }
 
@@ -119,6 +126,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
             else{
                 scoreToDisplay = currentScore.toString()
+
             }
             text_score.text = "Score: " + scoreToDisplay
         }
