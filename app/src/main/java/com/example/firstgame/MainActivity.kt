@@ -1,5 +1,6 @@
 package com.example.firstgame
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
@@ -63,6 +64,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ball = findViewById<View>(R.id.ball) as ImageView
         ground = findViewById<View>(R.id.ground) as LinearLayout
+
+        // Make the obstacle move START
+        val animator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 5000 // 1 second
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.RESTART
+            addUpdateListener { animator ->
+                obstacle!!.translationX = animator.animatedValue as Float * -obstacle!!.width
+            }
+        }
+        animator.start()
+        // Make the obstacle move END
 
         val root = findViewById<View>(R.id.main_layout) as ConstraintLayout
 
