@@ -20,16 +20,18 @@ import kotlin.random.Random
 class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
     var Time: Time = Time()
-    var noOfObstaclePool = 5
+    var noOfObstaclePool = 1
     var obstacles = mutableListOf<GameObject>()
+    var player = GameObject(RigidBody(500f,850f,0f),Sprite(100f,100f))
 
     init{
         for (i in 0 until noOfObstaclePool)
         {
-            var sprite: Sprite = Sprite(100f,100f)
-
             //setting xPos to -1 forces spawner to respawn object at random places on start
             var rb: RigidBody = RigidBody(-1f,850f,-550f)
+
+            var sprite: Sprite = Sprite(100f,100f)
+
             var obstacle = GameObject(rb,sprite)
             obstacles.add(obstacle)
         }
@@ -72,6 +74,30 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
             obstacles[i].Update(Time.deltaTime, 1)
             canvas.drawRect(obstacles[i].sprite.rectangle, obstacles[i].sprite.paint)
         }
+
+        player.Update(Time.deltaTime, 1)
+
+        for (i in 0 until obstacles.size)
+        {
+
+                Log.d("Rectangle", "Obstacle: " + obstacles[i].sprite.rectangle.toString())
+                Log.d("Rectangle", "Ball: " + player.sprite.rectangle.toString())
+
+
+            var b = player.collision.intersects(obstacles[i].collision)
+
+            if(b == true)
+            {
+                Log.d("collision", "Collides")
+                paint.color = Color.RED
+            }
+            else
+            {
+                paint.color = Color.BLUE
+            }
+        }
+        canvas.drawRect(player.sprite.rectangle, paint)
+
 
     }
 

@@ -56,8 +56,8 @@ class Sprite(
     var rectangle: RectF
     var paint: Paint
 
-    var PosX: Float = 0f
-    var PosY: Float = 0f
+    var PosX: Float = 0f //center of sprite
+    var PosY: Float = 0f //center of sprite
     var Width: Float
     var Height: Float
 
@@ -88,22 +88,33 @@ class Sprite(
 
 }
 
+class AABBCollision(val left: Float = 0f, val top: Float = 0f, val right: Float = 0f, val bottom: Float = 0f)
+{
+    fun intersects(other: AABBCollision): Boolean {
+        return right >= other.left && left <= other.right && bottom <= other.top && top >= other.bottom
+    }
+}
+
 class GameObject(
     rb: RigidBody,
     sp: Sprite
 ) {
     var rigidBody: RigidBody = RigidBody()
     var sprite: Sprite = Sprite()
+    var collision: AABBCollision = AABBCollision()
 
     // initializer block
     init {
         rigidBody = rb
         sprite = sp
+        collision = AABBCollision(sp.rectangle.left, sp.rectangle.top, sp.rectangle.right, sp.rectangle.bottom)
     }
 
     fun Update(deltaTime: Float, step: Int) {
         rigidBody.Physics(deltaTime, step)
         sprite.UpdateRectangle(rigidBody.xPos, rigidBody.yPos, sprite.Width, sprite.Height)
+        collision = AABBCollision(sprite.rectangle.left, sprite.rectangle.top, sprite.rectangle.right, sprite.rectangle.bottom)
+        collision.intersects(other = AABBCollision())
     }
 }
 
