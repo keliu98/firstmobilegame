@@ -50,7 +50,7 @@ class RigidBody(
 class Rectangle(
     width: Float = 1f,
     height: Float = 1f,
-    colour: Int = Color.RED,
+    colour: Int = Color.LTGRAY,
 ) {
     var rectangle: RectF
     var paint: Paint
