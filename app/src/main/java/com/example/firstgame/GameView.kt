@@ -42,16 +42,20 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        var retry = true
+        var retry = true //While true, keep trying to kill the stupid thread if it somehow fails the first time
+
         while (retry) {
             try {
+                /**
+                 * Kill the Thread, otherwise you'll get an zombie thread!
+                 */
                 thread.setRunning(false)
                 thread.join()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
-            retry = false
+            retry = false //On success stop retrying
         }
     }
 
