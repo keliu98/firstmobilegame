@@ -86,7 +86,7 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         }
 
         // Update ball physics
-        val gravity = 800f // The strength of gravity, in pixels per second squared
+        val gravity = 1250f // The strength of gravity, in pixels per second squared
 
         // Update ball's y acceleration to include gravity
         if (ball.rigidBody.yPos + ball.sprite.Height < ground.top) {
@@ -146,9 +146,13 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         for (obstacle in obstacles) {
             obstacle.Update(Time.deltaTime, 1)
             canvas.drawRect(obstacle.sprite.rectangle, obstacle.sprite.paint)
+
+            obstacle.rigidBody.xVel -= 0.15f
         }
         ball.Update(Time.deltaTime, 1)
         canvas.drawRect(ball.sprite.rectangle, ball.sprite.paint)
+
+
 
         // Update score
         currentScore++
