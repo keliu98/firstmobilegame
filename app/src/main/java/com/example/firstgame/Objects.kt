@@ -1,10 +1,6 @@
 package com.example.firstgame
 
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
-import android.util.Log
-import android.widget.ImageView
+import android.graphics.*
 
 class RigidBody(
     xPos: Float = 0f,
@@ -48,10 +44,13 @@ class RigidBody(
 
 }
 
-class Sprite(
+/**
+ * Note if image is provided, parameters width and height and color are ignored!
+ */
+class Rectangle(
     width: Float = 1f,
     height: Float = 1f,
-    colour: Int = Color.RED
+    colour: Int = Color.RED,
 ) {
     var rectangle: RectF
     var paint: Paint
@@ -62,12 +61,12 @@ class Sprite(
     var Height: Float
 
     init {
-        rectangle = RectF()
         Width = width
         Height = height
 
-        UpdateRectangle(PosX, PosY, Width, Height)
+        rectangle = RectF()
 
+        UpdateRectangle(PosX, PosY, Width, Height)
 
         paint = Paint().apply {
             color = colour
@@ -79,17 +78,16 @@ class Sprite(
         rectangle.bottom = y - 0.5f * height
         rectangle.left = x - 0.5f * width
         rectangle.right = x + 0.5f * width
-//
-//        rectangle.top = 300f
-//        rectangle.bottom =  -300f
-//        rectangle.left = -300f
-//        rectangle.right = 300f
     }
 
 }
 
-class AABBCollision(val left: Float = 0f, val top: Float = 0f, val right: Float = 0f, val bottom: Float = 0f)
-{
+class AABBCollision(
+    val left: Float = 0f,
+    val top: Float = 0f,
+    val right: Float = 0f,
+    val bottom: Float = 0f
+) {
     fun intersects(other: AABBCollision): Boolean {
         return right >= other.left && left <= other.right && bottom <= other.top && top >= other.bottom
     }
@@ -97,25 +95,38 @@ class AABBCollision(val left: Float = 0f, val top: Float = 0f, val right: Float 
 
 class GameObject(
     rb: RigidBody,
-    sp: Sprite
+    sp: Rectangle,
+    name: String = "GameObject"
 ) {
+    var name: String = name
     var rigidBody: RigidBody = RigidBody()
-    var sprite: Sprite = Sprite()
+    var rectangle: Rectangle = Rectangle()
     var collision: AABBCollision = AABBCollision()
 
     // initializer block
     init {
         rigidBody = rb
-        sprite = sp
-        collision = AABBCollision(sp.rectangle.left, sp.rectangle.top, sp.rectangle.right, sp.rectangle.bottom)
+        rectangle = sp
+        collision = AABBCollision(
+            sp.rectangle.left,
+            sp.rectangle.top,
+            sp.rectangle.right,
+            sp.rectangle.bottom
+        )
     }
 
     fun Update(deltaTime: Float, step: Int) {
         rigidBody.Physics(deltaTime, step)
-        sprite.UpdateRectangle(rigidBody.xPos, rigidBody.yPos, sprite.Width, sprite.Height)
-        collision = AABBCollision(sprite.rectangle.left, sprite.rectangle.top, sprite.rectangle.right, sprite.rectangle.bottom)
+        rectangle.UpdateRectangle(rigidBody.xPos, rigidBody.yPos, rectangle.Width, rectangle.Height)
+        collision = AABBCollision(
+            rectangle.rectangle.left,
+            rectangle.rectangle.top,
+            rectangle.rectangle.right,
+            rectangle.rectangle.bottom
+        )
         collision.intersects(other = AABBCollision())
     }
+
 }
 
 class Time {

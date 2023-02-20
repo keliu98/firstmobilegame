@@ -30,8 +30,7 @@
         <activity
             android:screenOrientation="landscape"
             android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="landscape">
+            android:exported="true">
         </activity>
 
         <activity

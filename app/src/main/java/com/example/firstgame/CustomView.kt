@@ -26,18 +26,19 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
     var obstacles = mutableListOf<GameObject>()
 
 
-    var bsprite: Sprite = Sprite(100f,100f, Color.GREEN)
+    var bsprite: Rectangle = Rectangle(100f,100f, Color.GREEN)
     var brb: RigidBody = RigidBody()
     var ball = GameObject(brb,bsprite)
 
     init{
         for (i in 0 until noOfObstaclePool)
         {
-            var sprite: Sprite = Sprite(100f,100f)
+            var rectangle: Rectangle = Rectangle(100f,100f)
 
             //setting xPos to -1 forces spawner to respawn object at random places on start
             var rb: RigidBody = RigidBody(-1f,850f,-550f)
-            var obstacle = GameObject(rb,sprite)
+
+            var obstacle = GameObject(rb,rectangle)
             obstacles.add(obstacle)
         }
     }
@@ -69,12 +70,12 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
         ball.rigidBody.xPos = 100f
         // Reset ball velocity when it hits the ground
-        if (ball.rigidBody.yPos + ball.sprite.Height/2 >= ground.top) {
+        if (ball.rigidBody.yPos + ball.rectangle.Height/2 >= ground.top) {
             ball.rigidBody.yVel = 0f
         }
 
         root.setOnTouchListener { view, event ->
-            if (ball.rigidBody.yPos + ball.sprite.Height >= ground.top) {
+            if (ball.rigidBody.yPos + ball.rectangle.Height >= ground.top) {
                 ball.rigidBody.yVel = -750f
                 ball.rigidBody.yPos = ball.rigidBody.yPos - 10
             }
@@ -89,7 +90,7 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         val gravity = 800f // The strength of gravity, in pixels per second squared
 
         // Update ball's y acceleration to include gravity
-        if (ball.rigidBody.yPos + ball.sprite.Height < ground.top) {
+        if (ball.rigidBody.yPos + ball.rectangle.Height < ground.top) {
             ball.rigidBody.yAcceleration = gravity
             Log.d("AIR", "AIR")
             Log.d("AIR:X", ball.rigidBody.xPos.toString())
@@ -113,23 +114,23 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         for(i in 0 until obstacles.size)
         {
             obstacles[i].Update(Time.deltaTime, 1)
-            canvas.drawRect(obstacles[i].sprite.rectangle, obstacles[i].sprite.paint)
+            canvas.drawRect(obstacles[i].rectangle.rectangle, obstacles[i].rectangle.paint)
         }
 
         // Collision detection
         val ballRect = Rect(
-            (ball.rigidBody.xPos - ball.sprite.Width/2).toInt(),
-            (ball.rigidBody.yPos - ball.sprite.Height/2).toInt(),
-            (ball.rigidBody.xPos + ball.sprite.Width/2).toInt(),
-            (ball.rigidBody.yPos + ball.sprite.Height/2).toInt()
+            (ball.rigidBody.xPos - ball.rectangle.Width/2).toInt(),
+            (ball.rigidBody.yPos - ball.rectangle.Height/2).toInt(),
+            (ball.rigidBody.xPos + ball.rectangle.Width/2).toInt(),
+            (ball.rigidBody.yPos + ball.rectangle.Height/2).toInt()
         )
 
         for (obstacle in obstacles) {
             val obstacleRect = Rect(
-                (obstacle.rigidBody.xPos - obstacle.sprite.Width/2).toInt(),
-                (obstacle.rigidBody.yPos - obstacle.sprite.Height/2).toInt(),
-                (obstacle.rigidBody.xPos + obstacle.sprite.Width/2).toInt(),
-                (obstacle.rigidBody.yPos + obstacle.sprite.Height/2).toInt()
+                (obstacle.rigidBody.xPos - obstacle.rectangle.Width/2).toInt(),
+                (obstacle.rigidBody.yPos - obstacle.rectangle.Height/2).toInt(),
+                (obstacle.rigidBody.xPos + obstacle.rectangle.Width/2).toInt(),
+                (obstacle.rigidBody.yPos + obstacle.rectangle.Height/2).toInt()
             )
             if (ballRect.intersect(obstacleRect)) {
                 // Collision detected
@@ -145,10 +146,10 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         // Update obstacles and draw them
         for (obstacle in obstacles) {
             obstacle.Update(Time.deltaTime, 1)
-            canvas.drawRect(obstacle.sprite.rectangle, obstacle.sprite.paint)
+            canvas.drawRect(obstacle.rectangle.rectangle, obstacle.rectangle.paint)
         }
         ball.Update(Time.deltaTime, 1)
-        canvas.drawRect(ball.sprite.rectangle, ball.sprite.paint)
+        canvas.drawRect(ball.rectangle.rectangle, ball.rectangle.paint)
 
         // Update score
         currentScore++
