@@ -57,9 +57,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
 
+
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+        /*
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ball = findViewById<View>(R.id.ball) as ImageView
         ground = findViewById<View>(R.id.ground) as LinearLayout
@@ -78,10 +80,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             currentScoreText.text = "Score: " + currentScore.toString()
             true
         }
-
+*/
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
+
+
 
 
 
@@ -158,20 +162,26 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onStart() {
         super.onStart()
+        /*
         sensorManager!!.registerListener(
             this, sensorManager!!.getDefaultSensor(
                 Sensor.TYPE_ACCELEROMETER
             ), SensorManager.SENSOR_DELAY_GAME
         )
+
+         */
     }
 
     override fun onStop() {
+        /*
         sensorManager!!.unregisterListener(this)
 
         CoroutineScope(Dispatchers.IO).launch {
             val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
             scoreView.insert(finalScore)
         }
+
+         */
 
         super.onStop()
     }
@@ -182,7 +192,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         updateXAccel(sensorEvent)
         updateX()
         updateY()
-        ball!!.x = xPos
+        //ball!!.x = xPos
         ball!!.y = yPos
         rotation += xVelocity / 2.5f
         ball!!.rotation = rotation

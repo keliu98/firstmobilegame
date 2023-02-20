@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">firstgame</string>
+    <string name="game_end">End Game</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="share">Share Score</string>
+    <string name="menu">Main Menu</string>
 </resources>
