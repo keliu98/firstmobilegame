@@ -2,36 +2,41 @@ package com.example.firstgame
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.RectF
-import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
-import android.widget.ImageView
 import android.widget.LinearLayout
-import java.util.*
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlin.random.Random
 
 class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
+    private var currentScore = 0
+    var running = true
+
     var Time: Time = Time()
-    var noOfObstaclePool = 1
+    var noOfObstaclePool = 5
     var obstacles = mutableListOf<GameObject>()
-    var player = GameObject(RigidBody(500f,850f,0f),Sprite(100f,100f))
+
+
+    var bsprite: Sprite = Sprite(100f,100f, Color.GREEN)
+    var brb: RigidBody = RigidBody()
+    var ball = GameObject(brb,bsprite)
 
     init{
         for (i in 0 until noOfObstaclePool)
         {
-            //setting xPos to -1 forces spawner to respawn object at random places on start
-            var rb: RigidBody = RigidBody(-1f,850f,-550f)
-
             var sprite: Sprite = Sprite(100f,100f)
 
+            //setting xPos to -1 forces spawner to respawn object at random places on start
+            var rb: RigidBody = RigidBody(-1f,850f,-550f)
             var obstacle = GameObject(rb,sprite)
             obstacles.add(obstacle)
         }
@@ -57,6 +62,45 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
     private fun GameLoop(canvas: Canvas)
     {
+        val ground = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
+        val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
+        val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
+        currentScoreText.text = "Score: " + currentScore.toString()
+
+        ball.rigidBody.xPos = 100f
+        // Reset ball velocity when it hits the ground
+        if (ball.rigidBody.yPos + ball.sprite.Height/2 >= ground.top) {
+            ball.rigidBody.yVel = 0f
+        }
+
+        root.setOnTouchListener { view, event ->
+            if (ball.rigidBody.yPos + ball.sprite.Height >= ground.top) {
+                ball.rigidBody.yVel = -750f
+                ball.rigidBody.yPos = ball.rigidBody.yPos - 10
+            }
+
+            Log.d("Listener", ball.rigidBody.yVel.toString())
+            Log.d("Listener:X", ball.rigidBody.xPos.toString())
+            Log.d("Listener:Y", ball.rigidBody.yPos.toString())
+            true // return true to indicate that the touch event has been handled
+        }
+
+        // Update ball physics
+        val gravity = 800f // The strength of gravity, in pixels per second squared
+
+        // Update ball's y acceleration to include gravity
+        if (ball.rigidBody.yPos + ball.sprite.Height < ground.top) {
+            ball.rigidBody.yAcceleration = gravity
+            Log.d("AIR", "AIR")
+            Log.d("AIR:X", ball.rigidBody.xPos.toString())
+            Log.d("AIR:Y", ball.rigidBody.yPos.toString())
+        } else {
+            ball.rigidBody.yAcceleration = 0f
+            Log.d("GROUND", "GROUND")
+            Log.d("GROUND:X", ball.rigidBody.xPos.toString())
+            Log.d("GROUND:Y", ball.rigidBody.yPos.toString())
+        }
+
         //Spawner
         for(i in 0 until obstacles.size)
         {
@@ -66,40 +110,50 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
             }
         }
 
-        Log.d("Obstacle xPos: ", obstacles[0].rigidBody.xPos.toString())
-
-
         for(i in 0 until obstacles.size)
         {
             obstacles[i].Update(Time.deltaTime, 1)
             canvas.drawRect(obstacles[i].sprite.rectangle, obstacles[i].sprite.paint)
         }
 
-        player.Update(Time.deltaTime, 1)
+        // Collision detection
+        val ballRect = Rect(
+            (ball.rigidBody.xPos - ball.sprite.Width/2).toInt(),
+            (ball.rigidBody.yPos - ball.sprite.Height/2).toInt(),
+            (ball.rigidBody.xPos + ball.sprite.Width/2).toInt(),
+            (ball.rigidBody.yPos + ball.sprite.Height/2).toInt()
+        )
 
-        for (i in 0 until obstacles.size)
-        {
-
-                Log.d("Rectangle", "Obstacle: " + obstacles[i].sprite.rectangle.toString())
-                Log.d("Rectangle", "Ball: " + player.sprite.rectangle.toString())
-
-
-            var b = player.collision.intersects(obstacles[i].collision)
-
-            if(b == true)
-            {
-                Log.d("collision", "Collides")
-                paint.color = Color.RED
-            }
-            else
-            {
-                paint.color = Color.BLUE
+        for (obstacle in obstacles) {
+            val obstacleRect = Rect(
+                (obstacle.rigidBody.xPos - obstacle.sprite.Width/2).toInt(),
+                (obstacle.rigidBody.yPos - obstacle.sprite.Height/2).toInt(),
+                (obstacle.rigidBody.xPos + obstacle.sprite.Width/2).toInt(),
+                (obstacle.rigidBody.yPos + obstacle.sprite.Height/2).toInt()
+            )
+            if (ballRect.intersect(obstacleRect)) {
+                // Collision detected
+                Log.d("GAMELOOP", "END")
+                val intent = Intent(context, GameOverActivity::class.java)
+                intent.putExtra("score", currentScore) // Pass score to GameOverActivity
+                context.startActivity(intent) // Open GameOverActivity
+                running=false
+                return // Stop the game loop
             }
         }
-        canvas.drawRect(player.sprite.rectangle, paint)
 
+        // Update obstacles and draw them
+        for (obstacle in obstacles) {
+            obstacle.Update(Time.deltaTime, 1)
+            canvas.drawRect(obstacle.sprite.rectangle, obstacle.sprite.paint)
+        }
+        ball.Update(Time.deltaTime, 1)
+        canvas.drawRect(ball.sprite.rectangle, ball.sprite.paint)
 
+        // Update score
+        currentScore++
     }
+
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -114,6 +168,14 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        GameLoop(canvas)
+        if(running)
+        {
+            GameLoop(canvas)
+        }
+        else
+        {
+            return
+        }
+    }
+}
 
-    }}

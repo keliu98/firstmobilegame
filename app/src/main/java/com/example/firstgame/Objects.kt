@@ -24,7 +24,7 @@ class RigidBody(
 
     fun Physics(deltaTime: Float, step: Int) {
 
-        Log.d("Step: ", step.toString())
+        //Log.d("Step: ", step.toString())
 
         for (i in 0 until step) {
             xVel += xAcceleration * deltaTime
@@ -51,7 +51,7 @@ class RigidBody(
 class Sprite(
     width: Float = 1f,
     height: Float = 1f,
-    colour: Int = Color.MAGENTA
+    colour: Int = Color.RED
 ) {
     var rectangle: RectF
     var paint: Paint
