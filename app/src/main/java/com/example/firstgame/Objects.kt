@@ -73,6 +73,9 @@ class Rectangle(
         }
     }
 
+    /**
+     * Call this whenever RigidBody has changed position
+     */
     fun UpdateRectangle(x: Float, y: Float, width: Float, height: Float) {
         rectangle.top = y + 0.5f * height
         rectangle.bottom = y - 0.5f * height
@@ -129,22 +132,26 @@ class GameObject(
 
 }
 
+class Obstacle : GameObject(rb){
+
+}
+
 class Time {
     var elapsedTime = 0f
     var startTime = 0L
     var endTime = 0L
-    var deltaTime = 1 / 60f
+    var targetDeltaTime = 1 / 60f
     var actualDeltaTime = 0f
     var step = 1
 
     fun Update() {
-
         step = 0
+
         actualDeltaTime = (endTime - startTime) / 1000000000f
         elapsedTime += actualDeltaTime
 
-        while (elapsedTime >= deltaTime) {
-            elapsedTime -= deltaTime;
+        while (elapsedTime >= targetDeltaTime) {
+            elapsedTime -= targetDeltaTime;
             step++;
         }
     }

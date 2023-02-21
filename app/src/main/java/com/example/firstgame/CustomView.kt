@@ -113,7 +113,7 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
         for(i in 0 until obstacles.size)
         {
-            obstacles[i].Update(Time.deltaTime, 1)
+            obstacles[i].Update(Time.targetDeltaTime, 1)
             canvas.drawRect(obstacles[i].rectangle.rectangle, obstacles[i].rectangle.paint)
         }
 
@@ -145,10 +145,10 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
 
         // Update obstacles and draw them
         for (obstacle in obstacles) {
-            obstacle.Update(Time.deltaTime, 1)
+            obstacle.Update(Time.targetDeltaTime, 1)
             canvas.drawRect(obstacle.rectangle.rectangle, obstacle.rectangle.paint)
         }
-        ball.Update(Time.deltaTime, 1)
+        ball.Update(Time.targetDeltaTime, 1)
         canvas.drawRect(ball.rectangle.rectangle, ball.rectangle.paint)
 
         // Update score

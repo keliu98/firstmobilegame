@@ -31,6 +31,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         //Init Game Object
         obstacle = GameObject(RigidBody(),Rectangle(100f,100f),"obstacle")
         obstacle!!.rigidBody.SetPosition(width/2f, height/2f)
+        obstacle!!.rigidBody.SetVelocity(-800f,0f)
 
         // start the game thread
         thread.setRunning(true)
@@ -62,8 +63,18 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     /**
      * Function to update the positions of player and game objects
      */
-    fun GameLoop() {
-        obstacle!!.Update(1/60f,1)
+    fun GameLoop(deltaTime: Float, step: Int) {
+
+        if(obstacle!!.rigidBody.xPos < 10){
+            obstacle!!.rigidBody.SetVelocity(800f,0f)
+        }
+
+        if(obstacle!!.rigidBody.xPos > width - 10 ){
+            obstacle!!.rigidBody.SetVelocity(-800f,0f)
+        }
+
+        obstacle!!.Update(deltaTime,step)
+
     }
 
     /**
