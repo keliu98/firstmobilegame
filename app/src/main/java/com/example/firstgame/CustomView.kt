@@ -151,6 +151,9 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
         }
         ball.Update(Time.deltaTime, 1)
         canvas.drawRect(ball.sprite.rectangle, ball.sprite.paint)
+        bsprite.updateParticles()
+        bsprite.render(canvas)
+
 
 
 
