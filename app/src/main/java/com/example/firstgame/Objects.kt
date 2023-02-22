@@ -132,9 +132,12 @@ class GameObject(
 
 }
 
-class Obstacle : GameObject(rb){
-
-}
+/**
+ * Inheritance
+ */
+//class Obstacle : GameObject(rb){
+//
+//}
 
 class Time {
     var elapsedTime = 0f

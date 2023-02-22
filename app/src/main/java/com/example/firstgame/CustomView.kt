@@ -25,7 +25,6 @@ class CustomView(context: Context, attrs: AttributeSet) : View(context, attrs){
     var noOfObstaclePool = 5
     var obstacles = mutableListOf<GameObject>()
 
-
     var bsprite: Rectangle = Rectangle(100f,100f, Color.GREEN)
     var brb: RigidBody = RigidBody()
     var ball = GameObject(brb,bsprite)
