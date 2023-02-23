@@ -1,6 +1,10 @@
 package com.example.firstgame
 
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
+import java.util.*
+import kotlin.random.Random
 
 class RigidBody(
     xPos: Float = 0f,
@@ -96,20 +100,28 @@ class AABBCollision(
     }
 }
 
-class GameObject(
+open class GameObject(
     rb: RigidBody,
     sp: Rectangle,
-    name: String = "GameObject"
+    name: String = "GameObject",
+    imageView: ImageView? = null,
 ) {
     var name: String = name
     var rigidBody: RigidBody = RigidBody()
-    var rectangle: Rectangle = Rectangle()
+    var rect: Rectangle = Rectangle()
     var collision: AABBCollision = AABBCollision()
+    var bitmap: Bitmap? = (imageView!!.drawable as BitmapDrawable).bitmap
 
     // initializer block
     init {
         rigidBody = rb
-        rectangle = sp
+        rect = sp
+
+        if(bitmap != null)
+        {
+            rect.UpdateRectangle(imageView!!.x.toFloat(), imageView.y.toFloat(), imageView.width.toFloat(), imageView.height.toFloat())
+        }
+
         collision = AABBCollision(
             sp.rectangle.left,
             sp.rectangle.top,
@@ -118,26 +130,81 @@ class GameObject(
         )
     }
 
+    /**
+     * Override-able function that dictates initialization of any child GameObjects.
+     */
+    open fun Init()
+    {
+        /**
+         * Don't put anything here! For inheritance only!
+         */
+    }
+
+    /**
+     * Basic updates required for GameObject. Not override-able! Override Behaviour() instead!
+     */
     fun Update(deltaTime: Float, step: Int) {
         rigidBody.Physics(deltaTime, step)
-        rectangle.UpdateRectangle(rigidBody.xPos, rigidBody.yPos, rectangle.Width, rectangle.Height)
+        rect.UpdateRectangle(rigidBody.xPos, rigidBody.yPos, rect.Width, rect.Height)
         collision = AABBCollision(
-            rectangle.rectangle.left,
-            rectangle.rectangle.top,
-            rectangle.rectangle.right,
-            rectangle.rectangle.bottom
+            rect.rectangle.left,
+            rect.rectangle.top,
+            rect.rectangle.right,
+            rect.rectangle.bottom
         )
         collision.intersects(other = AABBCollision())
     }
 
+    /**
+     * Override-able function that dictates Logic and Behaviour of any child GameObjects.
+     */
+    open fun Behaviour()
+    {
+        /**
+         * Don't put anything here! For inheritance only!
+         */
+    }
+
+    fun Draw(canvas: Canvas, paint: Paint)
+    {
+        if(bitmap == null)
+        {
+            canvas.drawRect(rect.rectangle, rect.paint)
+        }
+        else
+        {
+            canvas.drawBitmap(bitmap!!,null,rect.rectangle,null)
+        }
+    }
 }
 
 /**
  * Inheritance
  */
-//class Obstacle : GameObject(rb){
-//
-//}
+class Obstacle(
+    rb: RigidBody,
+    sp: Rectangle,
+    name: String = "GameObject",
+    canvasWidth: Int,
+) : GameObject(rb,sp,name)
+{
+    var obstacle_velocityX = -500f
+    var canvasW = canvasWidth
+
+    override fun Init()
+    {
+        this.rigidBody.xVel = obstacle_velocityX
+    }
+
+    override fun Behaviour()
+    {
+        if(this.rigidBody.xPos < 0)
+        {
+            var randomPosX = Random.nextInt(canvasW, canvasW + 1000)
+            this.rigidBody.xPos = randomPosX.toFloat()
+        }
+    }
+}
 
 class Time {
     var elapsedTime = 0f

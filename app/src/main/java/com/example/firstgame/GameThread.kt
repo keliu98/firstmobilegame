@@ -34,7 +34,7 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
                  * This is where the whole Game Loops!
                  */
                 synchronized(surfaceHolder) {
-                    this.gameView.GameLoop(Time.targetDeltaTime,Time.step)
+                    this.gameView.GameLoop(Time.targetDeltaTime,Time.step, canvas!!)
                     this.gameView.draw(canvas!!)
                 }
 
