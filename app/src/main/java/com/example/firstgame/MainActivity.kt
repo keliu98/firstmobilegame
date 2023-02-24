@@ -18,6 +18,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 
     private lateinit var scoreView : ScoreBoardViewModel
+    private lateinit var gameView: GameView
     private var currentScore = 0
 
     //private var scoreList = LiveData<List<ScoreboardItem>>()

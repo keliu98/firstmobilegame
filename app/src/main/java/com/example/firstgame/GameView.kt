@@ -1,21 +1,15 @@
 package com.example.firstgame
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import kotlin.random.Random
 
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
@@ -42,29 +36,6 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     //var groundImageView:LinearLayout = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
 
 
-
-    /**
-     * Add all the other views that you would like to update and run during gameplay
-     * moments!
-     */
-    val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
-    val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
-
-    /**
-     * Game Objects
-     */
-
-    var ground = GameObject(
-        RigidBody(0f,2000f),
-        Rectangle(width.toFloat(), 100f),
-        "Ground"
-    )
-
-    var bsprite: Rectangle = Rectangle(100f, 100f, Color.GREEN)
-    var brb: RigidBody = RigidBody()
-
-    var ball: Player
-
     /**
      * Miscellaneous Gameplay Properties
      */
@@ -77,6 +48,16 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
 
 
+    /**
+     * Game Objects
+     */
+
+    lateinit var ground : GameObject
+
+    lateinit var ball : Player
+
+
+
     init {
         // add callback
         holder.addCallback(this)
@@ -84,19 +65,33 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         // instantiate the game thread
         thread = GameThread(holder, this)
 
-        var ballImageView: ImageView = (context as MainActivity).findViewById<View>(R.id.ball) as ImageView
-        ball = Player(
-            brb,
-            bsprite,
-            "Ball",
-            ballImageView,
-            root,
-            ground)
+        Log.d("Canvas: ", "Width: ${width.toString()}, Height: ${height.toString()}")
+
+
     }
 
+    /**
+     * This is when the actual view is created. Recommend to init game objects here, especially if
+     * they depend on view properties such as Canvas width and height, as they are only guaranteed
+     * to be updated before surface created!
+     */
     override fun surfaceCreated(holder: SurfaceHolder) {
         //Init Game Objects
+        Log.d("Canvas: ", "Width: ${width.toString()}, Height: ${height.toString()}")
 
+        ground = GameObject(
+            RigidBody(0f,height - 100f),
+            Rectangle(width.toFloat(), 100f, Color.GREEN),
+            "Ground",
+            null
+        )
+
+        ball = Player(
+            RigidBody(100f,100f),
+            Rectangle(100f, 100f, Color.GREEN),
+            "Ball",
+            BitmapFactory.decodeResource(resources, R.drawable.golfball),
+            ground)
 
         // start the game thread
         thread.setRunning(true)
@@ -130,27 +125,21 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      * Function to update the positions of player and game objects
      */
     fun GameLoop(deltaTime: Float, step: Int, canvas: Canvas) {
+
+        /**
+         * Add all the other views that you would like to update and run during gameplay
+         * moments! Have to be done in update loop as other views may not be instantiated when
+         * GameView was created!
+         */
+        val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
         currentScoreText.text = "Score: " + currentScore.toString()
 
+        val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
 
-//        /**
-//         * User Input Logic
-//         */
-//        root.setOnTouchListener { view, event ->
-//            if (ball.rigidBody.yPos + ball.rect.Height >= ground.rect.rectangle.top) {
-//                ball.rigidBody.yVel = -750f
-//                ball.rigidBody.yPos = ball.rigidBody.yPos - 10
-//            }
-//
-//            Log.d("Listener", ball.rigidBody.yVel.toString())
-//            Log.d("Listener:X", ball.rigidBody.xPos.toString())
-//            Log.d("Listener:Y", ball.rigidBody.yPos.toString())
-//            true // return true to indicate that the touch event has been handled
-//        }
-        ball.Behaviour()
+        ball.Behaviour(root)
         ball.Update(deltaTime, step)
 
-
+        ground.Update(deltaTime, step)
 
 
 

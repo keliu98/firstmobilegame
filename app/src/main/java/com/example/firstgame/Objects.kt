@@ -2,6 +2,7 @@ package com.example.firstgame
 
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import java.util.*
@@ -49,9 +50,6 @@ class RigidBody(
 
 }
 
-/**
- * Note if image is provided, parameters width and height and color are ignored!
- */
 class Rectangle(
     width: Float = 1f,
     height: Float = 1f,
@@ -83,7 +81,7 @@ class Rectangle(
      */
     fun UpdateRectangle(x: Float, y: Float, width: Float, height: Float) {
         rectangle.top = y
-        rectangle.bottom = y - height
+        rectangle.bottom = y + height
         rectangle.left = x
         rectangle.right = x + width
     }
@@ -105,13 +103,13 @@ open class GameObject(
     rb: RigidBody,
     sp: Rectangle,
     name: String = "GameObject",
-    imageView: ImageView? = null,
+    bitmap: Bitmap? = null,
 ) {
     var name: String = name
     var rigidBody: RigidBody = RigidBody()
     var rect: Rectangle = Rectangle()
     var collision: AABBCollision = AABBCollision()
-    var bitmap: Bitmap? = (imageView!!.drawable as BitmapDrawable).bitmap
+    var bitmap: Bitmap? = bitmap
 
     // initializer block
     init {
@@ -120,13 +118,12 @@ open class GameObject(
 
         if (bitmap != null) {
             rect.UpdateRectangle(
-                imageView!!.x.toFloat(),
-                imageView.y.toFloat(),
-                imageView.width.toFloat(),
-                imageView.height.toFloat()
+                rigidBody.xPos,
+                rigidBody.yPos,
+                bitmap.width.toFloat(),
+                bitmap.height.toFloat()
             )
         }
-
         collision = AABBCollision(
             sp.rectangle.left,
             sp.rectangle.top,
@@ -157,12 +154,16 @@ open class GameObject(
             rect.rectangle.bottom
         )
         collision.intersects(other = AABBCollision())
+
+        Log.d("GameObject: ", "${name}, PosX,Y: ${rigidBody.xPos},${rigidBody.yPos}")
     }
 
     /**
      * Override-able function that dictates Logic and Behaviour of any child GameObjects.
+     * Needs root as there are multiple cases where we need to get the root during update,
+     * especially stuff like onTouchListeners.
      */
-    open fun Behaviour() {
+    open fun Behaviour(root: ConstraintLayout) {
         /**
          * Don't put anything here! For inheritance only!
          */
@@ -170,8 +171,10 @@ open class GameObject(
 
     fun Draw(canvas: Canvas, paint: Paint) {
         if (bitmap == null) {
+            Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
             canvas.drawRect(rect.rectangle, rect.paint)
         } else {
+
             canvas.drawBitmap(bitmap!!, null, rect.rectangle, null)
         }
     }
@@ -184,8 +187,9 @@ class Obstacle(
     rb: RigidBody,
     sp: Rectangle,
     name: String = "GameObject",
+    bitmap: Bitmap? = null,
     canvasWidth: Int,
-) : GameObject(rb, sp, name) {
+) : GameObject(rb, sp, name, bitmap) {
     var obstacle_velocityX = -500f
     var canvasW = canvasWidth
 
@@ -193,7 +197,7 @@ class Obstacle(
         this.rigidBody.xVel = obstacle_velocityX
     }
 
-    override fun Behaviour() {
+    override fun Behaviour(root: ConstraintLayout) {
         if (this.rigidBody.xPos < 0) {
             var randomPosX = Random.nextInt(canvasW, canvasW + 1000)
             this.rigidBody.xPos = randomPosX.toFloat()
@@ -205,16 +209,14 @@ class Player(
     rb: RigidBody,
     sp: Rectangle,
     name: String = "GameObject",
-    imageView: ImageView? = null,
-    root: ConstraintLayout, //For player to access the whole main view
-    ground: GameObject
-) : GameObject(rb, sp, name, imageView) {
+    bitmap: Bitmap? = null,
+    ground: GameObject //player needs to know where ground
+) : GameObject(rb, sp, name, bitmap) {
 
-    val mRoot = root
     var mGround = ground
     var state = State.GROUND
-    val gravity = 981f
-    val jumpVelocity = -800f
+    val gravity = 9000f
+    val jumpVelocity = -3000f
 
     enum class State {
         JUMP,
@@ -222,13 +224,20 @@ class Player(
         GROUND
     }
 
-    override fun Init() {
-        this.rigidBody.xPos = mGround.rect.rectangle.top + this.rect.rectangle.height()
+    init{
+        Log.d("Ball: ", bitmap.toString())
     }
 
-    override fun Behaviour() {
-        mRoot.setOnTouchListener { view, event ->
-            state = State.JUMP
+    override fun Init() {
+        this.rigidBody.yPos = mGround.rect.rectangle.top - this.rect.rectangle.height()
+    }
+
+    override fun Behaviour(root: ConstraintLayout) {
+        root.setOnTouchListener { view, event ->
+            if(state != State.AIR)
+            {
+                state = State.JUMP
+            }
             true // return true to indicate that the touch event has been handled
         }
 
@@ -239,7 +248,7 @@ class Player(
             }
 
             State.AIR -> {
-                if (this.rect.rectangle.bottom > mGround.rect.rectangle.top) {
+                if (this.rect.rectangle.bottom < mGround.rect.rectangle.top) {
                     this.rigidBody.yAcceleration = gravity
                 } else {
                     state = State.GROUND
@@ -247,11 +256,13 @@ class Player(
             }
 
             State.GROUND -> {
-                this.rigidBody.xPos = mGround.rect.rectangle.top
+                this.rigidBody.yPos = mGround.rect.rectangle.top - this.rect.Height
                 this.rigidBody.yAcceleration = 0f
                 this.rigidBody.yVel = 0f
             }
         }
+
+        Log.d("Ball: ", state.toString())
     }
 
 }
