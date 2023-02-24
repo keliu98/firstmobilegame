@@ -88,9 +88,9 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
         ball = Player(
             RigidBody(100f,100f),
-            Rectangle(100f, 100f, Color.GREEN),
+            Rectangle(236f, 200f, Color.GREEN),
             "Ball",
-            BitmapFactory.decodeResource(resources, R.drawable.golfball),
+            BitmapFactory.decodeResource(resources, R.drawable.pngegg),
             ground)
 
         // start the game thread
@@ -139,6 +139,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         ball.Behaviour(root)
         ball.Update(deltaTime, step)
 
+        
         ground.Update(deltaTime, step)
 
 
