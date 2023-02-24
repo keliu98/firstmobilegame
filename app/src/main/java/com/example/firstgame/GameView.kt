@@ -39,36 +39,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
 
     //TODO Change to ImageView
-    var groundImageView: LinearLayout = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
-    var ballImageView: ImageView = (context as MainActivity).findViewById<View>(R.id.ball) as ImageView
+    //var groundImageView:LinearLayout = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
 
-    /**
-     * Game Objects
-     */
-
-    var ground = GameObject(
-        RigidBody(groundImageView.x, groundImageView.y),
-        Rectangle(groundImageView.width.toFloat(), groundImageView.height.toFloat())
-    )
-
-    var bsprite: Rectangle = Rectangle(100f, 100f, Color.GREEN)
-    var brb: RigidBody = RigidBody()
-
-    var ball = GameObject(
-        brb,
-        bsprite,
-        "Ball",
-        ballImageView)
-
-    /**
-     * Miscellaneous Gameplay Properties
-     */
-
-    val gravity = 800f // The strength of gravity, in pixels per second squared
-
-    private val paint = Paint().apply {
-        color = Color.BLUE
-    }
 
 
     /**
@@ -78,9 +50,32 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
     val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
 
+    /**
+     * Game Objects
+     */
 
-    //Add ur gameobjects here!
-    private var obstacle: GameObject? = null
+    var ground = GameObject(
+        RigidBody(0f,2000f),
+        Rectangle(width.toFloat(), 100f),
+        "Ground"
+    )
+
+    var bsprite: Rectangle = Rectangle(100f, 100f, Color.GREEN)
+    var brb: RigidBody = RigidBody()
+
+    var ball: Player
+
+    /**
+     * Miscellaneous Gameplay Properties
+     */
+
+    //val gravity = 800f // The strength of gravity, in pixels per second squared
+
+    private val paint = Paint().apply {
+        color = Color.LTGRAY
+    }
+
+
 
     init {
         // add callback
@@ -88,6 +83,15 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
         // instantiate the game thread
         thread = GameThread(holder, this)
+
+        var ballImageView: ImageView = (context as MainActivity).findViewById<View>(R.id.ball) as ImageView
+        ball = Player(
+            brb,
+            bsprite,
+            "Ball",
+            ballImageView,
+            root,
+            ground)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -143,6 +147,10 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 //            Log.d("Listener:Y", ball.rigidBody.yPos.toString())
 //            true // return true to indicate that the touch event has been handled
 //        }
+        ball.Behaviour()
+        ball.Update(deltaTime, step)
+
+
 
 
 
@@ -156,7 +164,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-
+        ball.Draw(canvas, paint)
+        ground.Draw(canvas, paint)
 
     }
 

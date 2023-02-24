@@ -64,7 +64,7 @@ import kotlin.random.Random
 //    {
 //        val ground = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
 //        val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
-//        val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
+//
 //        currentScoreText.text = "Score: " + currentScore.toString()
 //
 //        ball.rigidBody.xPos = 100f
