@@ -26,7 +26,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     var noOfObstaclePool = 5
 
-    private var currentScore = 0
+    var currentScore = 0
 
     /**
      * Sprites to put into GameObject if needed

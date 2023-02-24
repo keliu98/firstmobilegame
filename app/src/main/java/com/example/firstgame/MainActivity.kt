@@ -64,6 +64,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+
+        runOnUiThread{
+
+        }
+
+
         /*
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ball = findViewById<View>(R.id.ball) as ImageView
@@ -95,6 +102,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val button_test = findViewById<Button>(R.id.test_email_button)
         button_test.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
+            currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
+            val currentScoreText = findViewById<TextView>(R.id.currentScore)
+            currentScoreText.text = "Score: " + currentScore.toString()
             showDialog(button_test)
         }
 

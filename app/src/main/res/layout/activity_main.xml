@@ -14,7 +14,8 @@
 
     <com.example.firstgame.GameView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:tag = "GameView"/>
 
     <TextView
         android:id="@+id/currentScore"
