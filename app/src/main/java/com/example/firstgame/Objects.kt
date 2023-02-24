@@ -95,7 +95,7 @@ class AABBCollision(
     val bottom: Float = 0f
 ) {
     fun intersects(other: AABBCollision): Boolean {
-        return right >= other.left && left <= other.right && bottom <= other.top && top >= other.bottom
+        return right >= other.left && left <= other.right && bottom >= other.top && top <= other.bottom
     }
 }
 
@@ -190,17 +190,30 @@ class Obstacle(
     bitmap: Bitmap? = null,
     canvasWidth: Int,
 ) : GameObject(rb, sp, name, bitmap) {
-    var obstacle_velocityX = -500f
+    var obstacle_velocityX = -1200f
     var canvasW = canvasWidth
+    var spacing = 1000
+    var active = true
 
     override fun Init() {
         this.rigidBody.xVel = obstacle_velocityX
     }
 
     override fun Behaviour(root: ConstraintLayout) {
-        if (this.rigidBody.xPos < 0) {
-            var randomPosX = Random.nextInt(canvasW, canvasW + 1000)
-            this.rigidBody.xPos = randomPosX.toFloat()
+        if (this.rigidBody.xPos + this.rect.rectangle.width() < 0) {
+//            var randomDeviation = Random.nextInt(0, 500)
+//            this.rigidBody.xPos = canvasW + spacing + randomDeviation.toFloat()
+            active = false
+        }
+
+        if(active == true)
+        {
+            this.rigidBody.xVel = obstacle_velocityX
+        }
+        else
+        {
+            this.rigidBody.xVel = 0f
+            this.rigidBody.xPos = -1000f //keep it in a safe place
         }
     }
 }
@@ -221,7 +234,9 @@ class Player(
     enum class State {
         JUMP,
         AIR,
-        GROUND
+        GROUND,
+        KILLED,
+        DEAD
     }
 
     init{
@@ -234,7 +249,7 @@ class Player(
 
     override fun Behaviour(root: ConstraintLayout) {
         root.setOnTouchListener { view, event ->
-            if(state != State.AIR)
+            if(state != State.AIR && state != State.DEAD)
             {
                 state = State.JUMP
             }
@@ -259,6 +274,15 @@ class Player(
                 this.rigidBody.yPos = mGround.rect.rectangle.top - this.rect.Height
                 this.rigidBody.yAcceleration = 0f
                 this.rigidBody.yVel = 0f
+            }
+
+            State.KILLED -> {
+                this.rigidBody.yVel = jumpVelocity
+                state = State.DEAD
+            }
+
+            State.DEAD -> {
+                this.rigidBody.yAcceleration = 0.5f * gravity
             }
         }
 
@@ -287,4 +311,14 @@ class Time {
             step++;
         }
     }
+}
+
+class RandomSpawns (size: Int) {
+    var randomInts: MutableList<Int> = mutableListOf()
+
+    init{
+
+    }
+
+
 }

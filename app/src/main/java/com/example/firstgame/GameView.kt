@@ -10,53 +10,50 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import kotlin.math.abs
+import kotlin.random.Random
 
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
+
+
 
     /**
      * Game Engine stuff that keeps the game ticking
      */
     private val thread: GameThread //Make a Game Thread
-    var Time: Time = Time()
-
 
     /**
      * Gameplay Managers
      */
     var noOfObstaclePool = 5
+    var spawnTimer = 1f
+    var elapsedTime = 0f
 
     var currentScore = 0
+
+    var allGameObject: MutableList<GameObject> = mutableListOf()
+    var allObstacle: MutableList<Obstacle> = mutableListOf()
 
     /**
      * Sprites to put into GameObject if needed
      */
-
-    //TODO Change to ImageView
-    //var groundImageView:LinearLayout = (context as MainActivity).findViewById<View>(R.id.ground) as LinearLayout
 
 
     /**
      * Miscellaneous Gameplay Properties
      */
 
-    //val gravity = 800f // The strength of gravity, in pixels per second squared
-
     private val paint = Paint().apply {
         color = Color.LTGRAY
     }
 
 
-
     /**
      * Game Objects
      */
-
     lateinit var ground : GameObject
-
     lateinit var ball : Player
-
-
 
     init {
         // add callback
@@ -66,7 +63,6 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         thread = GameThread(holder, this)
 
         Log.d("Canvas: ", "Width: ${width.toString()}, Height: ${height.toString()}")
-
 
     }
 
@@ -80,18 +76,51 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         Log.d("Canvas: ", "Width: ${width.toString()}, Height: ${height.toString()}")
 
         ground = GameObject(
-            RigidBody(0f,height - 100f),
+            RigidBody(0f, height - 100f),
             Rectangle(width.toFloat(), 100f, Color.GREEN),
             "Ground",
             null
         )
 
         ball = Player(
-            RigidBody(100f,100f),
+            RigidBody(100f, 100f),
             Rectangle(236f, 200f, Color.GREEN),
             "Ball",
             BitmapFactory.decodeResource(resources, R.drawable.pngegg),
-            ground)
+            ground
+        )
+
+        /**
+         * Make Obstacles
+         */
+        for (i in 0 until noOfObstaclePool) {
+            allObstacle.add(
+                Obstacle(
+                    RigidBody(/**width + i.toFloat() * 500**/ -1f, height - ground.rect.Height - 100f),
+                    Rectangle(100f, 100f),
+                    "Obstacle",
+                    BitmapFactory.decodeResource(resources, R.drawable.golfball),
+                    width
+                )
+            )
+        }
+
+        /**
+         * Pass it to all Game Object List. This should be by reference, so no copies
+         * are made. Hopefully.
+         */
+        for (i in 0 until noOfObstaclePool)
+        {
+            allGameObject.add(allObstacle[i])
+        }
+
+        allGameObject.add(ball)
+        allGameObject.add(ground)
+
+        for (i in 0 until allGameObject.size)
+        {
+            allGameObject[i].Init()
+        }
 
         // start the game thread
         thread.setRunning(true)
@@ -126,6 +155,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     fun GameLoop(deltaTime: Float, step: Int, canvas: Canvas) {
 
+
+
         /**
          * Add all the other views that you would like to update and run during gameplay
          * moments! Have to be done in update loop as other views may not be instantiated when
@@ -136,16 +167,97 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
         val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
 
-        ball.Behaviour(root)
-        ball.Update(deltaTime, step)
+//        ball.Behaviour(root)
+//        ball.Update(deltaTime, step)
+//
+//
+//        ground.Update(deltaTime, step)
 
-        
-        ground.Update(deltaTime, step)
+        for(i in 0 until allGameObject.size)
+        {
+            allGameObject[i].Behaviour(root)
+            allGameObject[i].Update(deltaTime, step)
+        }
 
+        if(ball.state != Player.State.DEAD)
+        {
+
+        for(i in 0 until allObstacle.size)
+        {
+            if(ball.collision.intersects(allObstacle[i].collision))
+            {
+                Log.d("Collide: ", "Dead")
+                ball.state = Player.State.KILLED
+            }
+        }
+
+        /**
+         * Obstacle Group Logic.
+         */
+
+
+
+//        for(i in 0 until allObstacle.size)
+//        {
+//            for(j in 0 until allObstacle.size)
+//            {
+//                var obstacleI_x = allObstacle[i].rigidBody.xPos
+//                var obstacleJ_x = allObstacle[j].rigidBody.xPos
+//
+//                if(i != j && obstacleI_x > width && obstacleJ_x > width)
+//                {
+//
+//                    if(abs(obstacleI_x - obstacleJ_x) > spacing)
+//                    {
+//                        if(obstacleI_x < obstacleJ_x)
+//                        {
+//                            //Obstacle[i] is left! Push J right
+//                            allObstacle[j].rigidBody.xPos += spacing
+//
+//                        }
+//                        else
+//                        {
+//                            //Obstacle[j] is on the left! Push I right
+//                            allObstacle[i].rigidBody.xPos += spacing
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
 
         // Update score
-        currentScore++
+
+            currentScore++
+        }
+
+        if(elapsedTime > spawnTimer)
+        {
+            elapsedTime = 0f
+            spawnTimer = Random.nextInt(1,5).toFloat()
+
+            for(obstacle in allObstacle)
+            {
+                obstacle.obstacle_velocityX -= 100f
+            }
+
+            for(i in 0 until allObstacle.size)
+            {
+                if(allObstacle[i].active == false)
+                {
+                    allObstacle[i].active = true
+                    allObstacle[i].rigidBody.xPos = width.toFloat()
+                    break
+                }
+            }
+        }
+        else
+        {
+            elapsedTime += deltaTime * step
+        }
+
+        //spawnTimer = Random.nextInt(1,1).toFloat()
+
 
     }
 
@@ -154,8 +266,11 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        ball.Draw(canvas, paint)
-        ground.Draw(canvas, paint)
+
+        for(i in 0 until allGameObject.size)
+        {
+            allGameObject[i].Draw(canvas,paint)
+        }
 
     }
 
