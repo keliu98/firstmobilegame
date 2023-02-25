@@ -15,7 +15,7 @@ class MenuActivity : AppCompatActivity() {
 
         val gameplay = findViewById<Button>(R.id.gameplaybutton)
         val scoreBoard = findViewById<Button>(R.id.ScoreBoardButton)
-        val button3 = findViewById<Button>(R.id.button3)
+        val button3 = findViewById<Button>(R.id.send_email_button2)
 
         gameplay.setOnClickListener {
             // Add code for what should happen when button 1 is clicked

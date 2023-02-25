@@ -18,6 +18,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -41,8 +43,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var ground: LinearLayout? = null
 
 
-    private lateinit var scoreView : ScoreBoardViewModel
-    private var currentScore = 0
+    //private lateinit var scoreView : ScoreBoardViewModel
+    //private lateinit var gameView: GameView
+    //private var currentScore = 0
 
     //private var scoreList = LiveData<List<ScoreboardItem>>()
 
@@ -55,12 +58,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
+       //scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
 
 
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+
+        runOnUiThread{
+
+        }
+
+
         /*
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         ball = findViewById<View>(R.id.ball) as ImageView
@@ -86,30 +96,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         screenWidth = displayMetrics.widthPixels.toFloat()
 
 
-
-
-
-        val button_test = findViewById<Button>(R.id.test_email_button)
-        button_test.setOnClickListener {
-            // Add code for what should happen when button 1 is clicked
-            showDialog(button_test)
-        }
-
-
+//        val button_test = findViewById<Button>(R.id.test_email_button)
+//        button_test.setOnClickListener {
+//            // Add code for what should happen when button 1 is clicked
+//            val currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
+//            val currentScoreText = findViewById<TextView>(R.id.currentScore)
+//            currentScoreText.text = "Score: " + currentScore.toString()
+//            showDialog(button_test, currentScore)
+//        }
 
     }
 
-    /**
-     * Adds score whenever you want
-     */
-    private fun AddScore(scoreToAdd :Int){
-        currentScore += scoreToAdd
-    }
+//    /**
+//     * Adds score whenever you want
+//     */
+//    private fun AddScore(scoreToAdd :Int){
+//        currentScore += scoreToAdd
+//    }
 
 
-    private fun showDialog(viewWhenClicked: View) {
+     fun showMyDialog(currentScore: Int) {
+        var scoreView : ScoreBoardViewModel = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
         val dialog = Dialog(this)
+
+        //dialog.setCancelable(false) <- This wont work
+
         dialog.setContentView(R.layout.popup_layout)
+        dialog.setCancelable(false) //must be here
 
         // Set up click listeners for any buttons in the pop-up window
         val button1 = dialog.findViewById<Button>(R.id.share_score)
@@ -130,7 +143,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
             else{
                 scoreToDisplay = currentScore.toString()
-
             }
             text_score.text = "Score: " + scoreToDisplay
         }
@@ -151,12 +163,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         button2.setOnClickListener {
             // Do something when button 2 is clicked
+            CoroutineScope(Dispatchers.IO).launch {
+                val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
+                scoreView.insert(finalScore)
+            }
+
             val intent = Intent(this, MenuActivity::class.java)
             startActivity(intent)
-
             //dialog.dismiss() // Close the dialog when done
         }
-
         dialog.show()
     }
 

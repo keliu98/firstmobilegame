@@ -17,17 +17,6 @@ import kotlin.random.Random
 class Utils private constructor() {
 
     companion object {
-        /**
-         * Returns a random four digit number between 1000 and 9999
-         * @return
-         */
-        @JvmStatic
-        fun generateRandomFourDigitNumber(): Int
-        {
-            //TODO logic to return a random four digit number between 1000 and 9999
-            //  call Utils.generateRandomFourDigitNumber() in MainActivity
-            return Random.nextInt(1000, 9999)
-        }
 
         @JvmStatic
         fun FormatDate(date: Date) : String
