@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +16,6 @@ import kotlin.random.Random
 
 class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
     SurfaceHolder.Callback {
-
 
 
     /**
@@ -52,8 +52,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     /**
      * Game Objects
      */
-    lateinit var ground : GameObject
-    lateinit var ball : Player
+    lateinit var ground: GameObject
+    lateinit var ball: Player
 
     init {
         // add callback
@@ -87,7 +87,9 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
             Rectangle(236f, 200f, Color.GREEN),
             "Ball",
             BitmapFactory.decodeResource(resources, R.drawable.pngegg),
-            ground
+            ground,
+            context,
+            thread
         )
 
         /**
@@ -96,7 +98,10 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         for (i in 0 until noOfObstaclePool) {
             allObstacle.add(
                 Obstacle(
-                    RigidBody(/**width + i.toFloat() * 500**/ -1f, height - ground.rect.Height - 100f),
+                    RigidBody(
+                        /**width + i.toFloat() * 500**/
+                        -1f, height - ground.rect.Height - 100f
+                    ),
                     Rectangle(100f, 100f),
                     "Obstacle",
                     BitmapFactory.decodeResource(resources, R.drawable.golfball),
@@ -109,16 +114,14 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
          * Pass it to all Game Object List. This should be by reference, so no copies
          * are made. Hopefully.
          */
-        for (i in 0 until noOfObstaclePool)
-        {
+        for (i in 0 until noOfObstaclePool) {
             allGameObject.add(allObstacle[i])
         }
 
         allGameObject.add(ball)
         allGameObject.add(ground)
 
-        for (i in 0 until allGameObject.size)
-        {
+        for (i in 0 until allGameObject.size) {
             allGameObject[i].Init()
         }
 
@@ -154,18 +157,22 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      * Function to update the positions of player and game objects
      */
     fun GameLoop(deltaTime: Float, step: Int, canvas: Canvas) {
-
-
-
         /**
          * Add all the other views that you would like to update and run during gameplay
          * moments! Have to be done in update loop as other views may not be instantiated when
          * GameView was created!
+         *
+         * Recommend to also use (context as MainActivity).runOnUiThread() to update UI in real time!
          */
-        val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
-        currentScoreText.text = "Score: " + currentScore.toString()
 
-        val root = (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
+        (context as MainActivity).runOnUiThread(){
+            val currentScoreText = (context as MainActivity).findViewById<TextView>(R.id.currentScore)
+            currentScoreText.text = "Score: " + currentScore.toString()
+        }
+
+        val root =
+            (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
+
 
 //        ball.Behaviour(root)
 //        ball.Update(deltaTime, step)
@@ -173,88 +180,52 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 //
 //        ground.Update(deltaTime, step)
 
-        for(i in 0 until allGameObject.size)
-        {
+        for (i in 0 until allGameObject.size) {
             allGameObject[i].Behaviour(root)
             allGameObject[i].Update(deltaTime, step)
         }
 
-        if(ball.state != Player.State.DEAD)
-        {
-
-        for(i in 0 until allObstacle.size)
-        {
-            if(ball.collision.intersects(allObstacle[i].collision))
+        if (ball.state == Player.State.DEAD || ball.state == Player.State.END) {
+            for (obstacle in allObstacle)
             {
-                Log.d("Collide: ", "Dead")
-                ball.state = Player.State.KILLED
+                obstacle.active = Obstacle.State.EXIT
             }
-        }
-
-        /**
-         * Obstacle Group Logic.
-         */
-
-
-
-//        for(i in 0 until allObstacle.size)
-//        {
-//            for(j in 0 until allObstacle.size)
-//            {
-//                var obstacleI_x = allObstacle[i].rigidBody.xPos
-//                var obstacleJ_x = allObstacle[j].rigidBody.xPos
-//
-//                if(i != j && obstacleI_x > width && obstacleJ_x > width)
-//                {
-//
-//                    if(abs(obstacleI_x - obstacleJ_x) > spacing)
-//                    {
-//                        if(obstacleI_x < obstacleJ_x)
-//                        {
-//                            //Obstacle[i] is left! Push J right
-//                            allObstacle[j].rigidBody.xPos += spacing
-//
-//                        }
-//                        else
-//                        {
-//                            //Obstacle[j] is on the left! Push I right
-//                            allObstacle[i].rigidBody.xPos += spacing
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-
-        // Update score
-
-            currentScore++
-        }
-
-        if(elapsedTime > spawnTimer)
-        {
-            elapsedTime = 0f
-            spawnTimer = Random.nextInt(1,5).toFloat()
-
-            for(obstacle in allObstacle)
-            {
-                obstacle.obstacle_velocityX -= 100f
-            }
-
-            for(i in 0 until allObstacle.size)
-            {
-                if(allObstacle[i].active == false)
-                {
-                    allObstacle[i].active = true
-                    allObstacle[i].rigidBody.xPos = width.toFloat()
-                    break
+        } else {
+            for (i in 0 until allObstacle.size) {
+                if (ball.collision.intersects(allObstacle[i].collision)) {
+                    Log.d("Collide: ", "Dead")
+                    ball.state = Player.State.KILLED
                 }
             }
+
+            /**
+             * Obstacle Group Logic.
+             */
+
+            // Update score
+
+            currentScore++
+
+            if (elapsedTime > spawnTimer) {
+                elapsedTime = 0f
+                spawnTimer = Random.nextInt(1, 5).toFloat()
+
+                for (obstacle in allObstacle) {
+                    obstacle.obstacle_velocityX -= 100f
+                }
+
+                for (i in 0 until allObstacle.size) {
+                    if (allObstacle[i].active == Obstacle.State.INACTIVE) {
+                        allObstacle[i].active = Obstacle.State.ACTIVE
+                        allObstacle[i].rigidBody.xPos = width.toFloat()
+                        break
+                    }
+                }
+            } else {
+                elapsedTime += deltaTime * step
+            }
         }
-        else
-        {
-            elapsedTime += deltaTime * step
-        }
+
 
         //spawnTimer = Random.nextInt(1,1).toFloat()
 
@@ -267,9 +238,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
-        for(i in 0 until allGameObject.size)
-        {
-            allGameObject[i].Draw(canvas,paint)
+        for (i in 0 until allGameObject.size) {
+            allGameObject[i].Draw(canvas, paint)
         }
 
     }

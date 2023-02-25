@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var scoreView : ScoreBoardViewModel
     private lateinit var gameView: GameView
-    private var currentScore = 0
+    //private var currentScore = 0
 
     //private var scoreList = LiveData<List<ScoreboardItem>>()
 
@@ -102,25 +102,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val button_test = findViewById<Button>(R.id.test_email_button)
         button_test.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
-            currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
+            val currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
             val currentScoreText = findViewById<TextView>(R.id.currentScore)
             currentScoreText.text = "Score: " + currentScore.toString()
-            showDialog(button_test)
+            showDialog(button_test, currentScore)
         }
 
 
 
     }
 
-    /**
-     * Adds score whenever you want
-     */
-    private fun AddScore(scoreToAdd :Int){
-        currentScore += scoreToAdd
-    }
+//    /**
+//     * Adds score whenever you want
+//     */
+//    private fun AddScore(scoreToAdd :Int){
+//        currentScore += scoreToAdd
+//    }
 
 
-    private fun showDialog(viewWhenClicked: View) {
+    fun showDialog(viewWhenClicked: View, currentScore: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_layout)
 
@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
             else{
                 scoreToDisplay = currentScore.toString()
-
             }
             text_score.text = "Score: " + scoreToDisplay
         }

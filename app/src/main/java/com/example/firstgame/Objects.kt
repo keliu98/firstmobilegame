@@ -1,8 +1,11 @@
 package com.example.firstgame
 
+import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.os.Looper
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import java.util.*
@@ -193,28 +196,43 @@ class Obstacle(
     var obstacle_velocityX = -1200f
     var canvasW = canvasWidth
     var spacing = 1000
-    var active = true
+    var active = State.ACTIVE
+
+    enum class State {
+        ACTIVE,
+        INACTIVE,
+        EXIT
+    }
 
     override fun Init() {
         this.rigidBody.xVel = obstacle_velocityX
     }
 
     override fun Behaviour(root: ConstraintLayout) {
-        if (this.rigidBody.xPos + this.rect.rectangle.width() < 0) {
+
+
+        when(active)
+        {
+            State.ACTIVE -> {
+                this.rigidBody.xVel = obstacle_velocityX
+
+                if (this.rigidBody.xPos + this.rect.rectangle.width() < 0) {
 //            var randomDeviation = Random.nextInt(0, 500)
 //            this.rigidBody.xPos = canvasW + spacing + randomDeviation.toFloat()
-            active = false
+                    active = State.INACTIVE
+                }
+            }
+
+            State.INACTIVE -> {
+                this.rigidBody.xVel = 0f
+                this.rigidBody.xPos = -1000f //keep it in a safe place
+            }
+
+            State.EXIT -> {
+                this.rigidBody.xVel = 0f
+            }
         }
 
-        if(active == true)
-        {
-            this.rigidBody.xVel = obstacle_velocityX
-        }
-        else
-        {
-            this.rigidBody.xVel = 0f
-            this.rigidBody.xPos = -1000f //keep it in a safe place
-        }
     }
 }
 
@@ -223,7 +241,9 @@ class Player(
     sp: Rectangle,
     name: String = "GameObject",
     bitmap: Bitmap? = null,
-    ground: GameObject //player needs to know where ground
+    ground: GameObject, //player needs to know where ground
+    context: Context,
+    thread: GameThread
 ) : GameObject(rb, sp, name, bitmap) {
 
     var mGround = ground
@@ -231,12 +251,16 @@ class Player(
     val gravity = 9000f
     val jumpVelocity = -3000f
 
+    var context: Context = context
+    var thread: GameThread = thread
+
     enum class State {
         JUMP,
         AIR,
         GROUND,
         KILLED,
-        DEAD
+        DEAD,
+        END
     }
 
     init{
@@ -283,6 +307,22 @@ class Player(
 
             State.DEAD -> {
                 this.rigidBody.yAcceleration = 0.5f * gravity
+
+                if(this.rigidBody.yPos >= 5000f) //Trigger to trigger end game menu
+                {
+                    (context as MainActivity).runOnUiThread()
+                    {
+                        val button_test = (context as MainActivity).findViewById<Button>(R.id.test_email_button)
+                        (context as MainActivity).showDialog(button_test, root.findViewWithTag<GameView>("GameView").currentScore)
+                    }
+                    state = State.END
+                }
+            }
+            State.END -> {
+                //Do nothing
+                this.rigidBody.yVel = 0f
+                this.rigidBody.yAcceleration = 0f
+                thread.setRunning(false)
             }
         }
 
