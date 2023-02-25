@@ -24,6 +24,25 @@ class Utils private constructor() {
             val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
             return formatter.format(date)
         }
+
+        @JvmStatic
+        fun NegativeOneOrNot() : Int
+        {
+            var randomInt = Random.nextInt(1,3)
+
+            var negativeOneOrNot = 1
+
+            if(randomInt == 1)
+            {
+                negativeOneOrNot = 1
+            }
+            else
+            {
+                negativeOneOrNot = -1
+            }
+
+            return negativeOneOrNot
+        }
     }
 
 }
