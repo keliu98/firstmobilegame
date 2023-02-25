@@ -2,9 +2,15 @@ package com.example.firstgame
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
 
 class MenuActivity : AppCompatActivity() {
 
@@ -15,7 +21,7 @@ class MenuActivity : AppCompatActivity() {
 
         val gameplay = findViewById<Button>(R.id.gameplaybutton)
         val scoreBoard = findViewById<Button>(R.id.ScoreBoardButton)
-        val button3 = findViewById<Button>(R.id.send_email_button2)
+        var scoreView : ScoreBoardViewModel = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
 
         gameplay.setOnClickListener {
             // Add code for what should happen when button 1 is clicked
@@ -28,10 +34,6 @@ class MenuActivity : AppCompatActivity() {
             // Add code for what should happen when button 2 is clicked
             val intent = Intent(this, ScoreBoardActivity::class.java)
             startActivity(intent)
-        }
-
-        button3.setOnClickListener {
-            // Add code for what should happen when button 3 is clicked
         }
     }
 }

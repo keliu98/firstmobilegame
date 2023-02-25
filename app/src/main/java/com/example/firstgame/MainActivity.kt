@@ -125,8 +125,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         dialog.setCancelable(false) //must be here
 
         // Set up click listeners for any buttons in the pop-up window
-        val button1 = dialog.findViewById<Button>(R.id.share_score)
-        val button2 = dialog.findViewById<Button>(R.id.exitgame_button)
+        val send_email_button = dialog.findViewById<Button>(R.id.share_score)
+        val back_to_menu_button = dialog.findViewById<Button>(R.id.exitgame_button)
         val text_score = dialog.findViewById<TextView>(R.id.text_score)
 
         //Database ALWAYS returns LiveData, and hence an observer is always needed to read LiveData.
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             text_score.text = "Score: " + scoreToDisplay
         }
 
-        button1.setOnClickListener {
+        send_email_button.setOnClickListener {
             // Do something when button 1 is clicked
             val intent = Intent(Intent.ACTION_SENDTO).apply {
 
@@ -161,7 +161,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             startActivity(intent)
         }
 
-        button2.setOnClickListener {
+         /**
+          * Back to main menu
+          */
+         back_to_menu_button.setOnClickListener {
             // Do something when button 2 is clicked
             CoroutineScope(Dispatchers.IO).launch {
                 val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
