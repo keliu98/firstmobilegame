@@ -79,7 +79,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
         ground = GameObject(
             RigidBody(0f, height - 100f),
-            Rectangle(width.toFloat(), 100f, Color.GREEN),
+            Rectangle(width.toFloat(), 100f, Color.LTGRAY),
             "Ground",
             null
         )
@@ -115,7 +115,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
                     ),
                     Rectangle(100f, 100f),
                     "Obstacle",
-                    BitmapFactory.decodeResource(resources, R.drawable.golfball),
+                    BitmapFactory.decodeResource(resources, R.drawable.spikes),
                     width
                 )
             )
