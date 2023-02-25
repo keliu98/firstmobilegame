@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Display
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
@@ -196,6 +197,10 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         }
 
         particleEntity.updateParticles(deltaTime, step)
+        particleEntity.xPos = 1000f
+        particleEntity.yPos = 700f
+        particleEntity.Width = 1000f
+        particleEntity.Height = 500f
 
         if (ball.state == Player.State.DEAD || ball.state == Player.State.END) {
             for (obstacle in allObstacle)

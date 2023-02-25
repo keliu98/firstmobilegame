@@ -147,12 +147,16 @@ import kotlin.random.Random
 //            obstacle.Update(Time.targetDeltaTime, 1)
 //            canvas.drawRect(obstacle.rect.rectangle, obstacle.rect.paint)
 //        }
-//        ball.Update(Time.targetDeltaTime, 1)
-//        canvas.drawRect(ball.rect.rectangle, ball.rect.paint)
+//        ball.Update(Time.deltaTime, 1)
+//       canvas.drawRect(ball.sprite.rectangle, ball.sprite.paint)
+//        bsprite.updateParticles()
+//        bsprite.render(canvas)
+//
+//
+//
 //
 //        // Update score
 //        currentScore++
-//    }
 //
 //
 //    override fun onAttachedToWindow() {
