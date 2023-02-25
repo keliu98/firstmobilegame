@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import java.util.*
+import kotlin.math.max
 import kotlin.random.Random
 
 class RigidBody(
@@ -172,7 +173,7 @@ open class GameObject(
          */
     }
 
-    fun Draw(canvas: Canvas, paint: Paint) {
+    open fun Draw(canvas: Canvas, paint: Paint) {
         if (bitmap == null) {
             Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
             canvas.drawRect(rect.rectangle, rect.paint)
@@ -234,6 +235,8 @@ class Obstacle(
         }
 
     }
+
+
 }
 
 class Player(
@@ -241,6 +244,7 @@ class Player(
     sp: Rectangle,
     name: String = "GameObject",
     bitmap: Bitmap? = null,
+    bitmap2: Bitmap? = null,
     ground: GameObject, //player needs to know where ground
     context: Context,
     thread: GameThread
@@ -250,6 +254,13 @@ class Player(
     var state = State.GROUND
     val gravity = 9000f
     val jumpVelocity = -3000f
+
+    var frame = 0
+    var maxFrame = 2
+    var frames: List<Bitmap?> = listOf(bitmap, bitmap2)
+
+    val animTimer = 0.2f
+    var currentTime = 0f
 
     var context: Context = context
     var thread: GameThread = thread
@@ -272,6 +283,7 @@ class Player(
     }
 
     override fun Behaviour(root: ConstraintLayout) {
+
         root.setOnTouchListener { view, event ->
             if(state != State.AIR && state != State.DEAD)
             {
@@ -298,6 +310,23 @@ class Player(
                 this.rigidBody.yPos = mGround.rect.rectangle.top - this.rect.Height
                 this.rigidBody.yAcceleration = 0f
                 this.rigidBody.yVel = 0f
+
+                if(currentTime > animTimer)
+                {
+                    frame += 1
+
+                    if(frame >= maxFrame)
+                    {
+                        frame = 0
+                    }
+
+                    currentTime = 0f
+                }
+                else
+                {
+                    currentTime += thread.Time.actualDeltaTime
+                }
+
             }
 
             State.KILLED -> {
@@ -312,8 +341,7 @@ class Player(
                 {
                     (context as MainActivity).runOnUiThread()
                     {
-                        val button_test = (context as MainActivity).findViewById<Button>(R.id.test_email_button)
-                        (context as MainActivity).showDialog(button_test, root.findViewWithTag<GameView>("GameView").currentScore)
+                        (context as MainActivity).showMyDialog(root.findViewWithTag<GameView>("GameView").currentScore)
                     }
                     state = State.END
                 }
@@ -327,6 +355,16 @@ class Player(
         }
 
         Log.d("Ball: ", state.toString())
+    }
+
+    override fun Draw(canvas: Canvas, paint: Paint)
+    {
+        if (frames[frame] == null) {
+            Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
+            canvas.drawRect(rect.rectangle, rect.paint)
+        } else {
+            canvas.drawBitmap(frames[frame]!!, null, rect.rectangle, null)
+        }
     }
 
 }
@@ -351,14 +389,4 @@ class Time {
             step++;
         }
     }
-}
-
-class RandomSpawns (size: Int) {
-    var randomInts: MutableList<Int> = mutableListOf()
-
-    init{
-
-    }
-
-
 }

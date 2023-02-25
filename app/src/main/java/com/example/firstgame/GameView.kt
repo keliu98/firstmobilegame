@@ -86,7 +86,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
             RigidBody(100f, 100f),
             Rectangle(236f, 200f, Color.GREEN),
             "Ball",
-            BitmapFactory.decodeResource(resources, R.drawable.pngegg),
+            BitmapFactory.decodeResource(resources, R.drawable.pickles1),
+            BitmapFactory.decodeResource(resources, R.drawable.pickles2),
             ground,
             context,
             thread

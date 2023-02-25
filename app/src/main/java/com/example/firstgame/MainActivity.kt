@@ -96,17 +96,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         screenWidth = displayMetrics.widthPixels.toFloat()
 
 
+//        val button_test = findViewById<Button>(R.id.test_email_button)
+//        button_test.setOnClickListener {
+//            // Add code for what should happen when button 1 is clicked
+//            val currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
+//            val currentScoreText = findViewById<TextView>(R.id.currentScore)
+//            currentScoreText.text = "Score: " + currentScore.toString()
+//            showDialog(button_test, currentScore)
+//        }
 
-
-
-        val button_test = findViewById<Button>(R.id.test_email_button)
-        button_test.setOnClickListener {
-            // Add code for what should happen when button 1 is clicked
-            val currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
-            val currentScoreText = findViewById<TextView>(R.id.currentScore)
-            currentScoreText.text = "Score: " + currentScore.toString()
-            showDialog(button_test, currentScore)
-        }
     }
 
 //    /**
@@ -117,14 +115,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //    }
 
 
-    fun showDialog(viewWhenClicked: View, currentScore: Int) {
+     fun showMyDialog(currentScore: Int) {
         var scoreView : ScoreBoardViewModel = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
         val dialog = Dialog(this)
 
         //dialog.setCancelable(false) <- This wont work
 
         dialog.setContentView(R.layout.popup_layout)
-
         dialog.setCancelable(false) //must be here
 
         // Set up click listeners for any buttons in the pop-up window
