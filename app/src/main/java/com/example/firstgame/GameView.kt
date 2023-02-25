@@ -97,10 +97,10 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
 
         particleEntity =
             ParticleEntity(
-                150f,
-                800f,
-                100f,
-                100f,
+                1000f,
+                50f,
+                1000f,
+                10f,
                 Color.WHITE)
 
         /**
@@ -185,22 +185,13 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
             (context as MainActivity).findViewById<View>(R.id.main_layout) as ConstraintLayout
 
 
-//        ball.Behaviour(root)
-//        ball.Update(deltaTime, step)
-//
-//
-//        ground.Update(deltaTime, step)
-
         for (i in 0 until allGameObject.size) {
             allGameObject[i].Behaviour(root)
             allGameObject[i].Update(deltaTime, step)
         }
 
         particleEntity.updateParticles(deltaTime, step)
-        particleEntity.xPos = 1000f
-        particleEntity.yPos = 700f
-        particleEntity.Width = 1000f
-        particleEntity.Height = 500f
+
 
         if (ball.state == Player.State.DEAD || ball.state == Player.State.END) {
             for (obstacle in allObstacle)
@@ -242,11 +233,6 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
                 elapsedTime += deltaTime * step
             }
         }
-
-
-        //spawnTimer = Random.nextInt(1,1).toFloat()
-
-
     }
 
     /**

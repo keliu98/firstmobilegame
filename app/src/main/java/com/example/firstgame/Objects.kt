@@ -71,17 +71,6 @@ class Rectangle(
     var Width: Float
     var Height: Float
 
-    // new particle properties
-    private val particles = ArrayList<Particle>()
-    private val particleCount = 10
-    private val particleInterval = 100 // in milliseconds
-    private val particleHandler = android.os.Handler()
-    private val particleRunnable = object : Runnable {
-        override fun run() {
-            addParticle()
-            particleHandler.postDelayed(this, particleInterval.toLong())
-        }
-    }
     init {
         Width = width
         Height = height
@@ -89,10 +78,6 @@ class Rectangle(
         rectangle = RectF()
 
         UpdateRectangle(PosX, PosY, Width, Height)
-                // create particles
-        for (i in 0 until particleCount) {
-            particles.add(Particle(PosX, PosY, Color.WHITE))
-        }
 
 
         paint = Paint().apply {
@@ -100,50 +85,7 @@ class Rectangle(
         }
     }
 
-    fun updateParticles() {
-        for (particle in particles) {
-            particle.x += particle.vx
-            particle.y += particle.vy
-        }
-    }
-
-
-    private val maxParticleCount = 50 // maximum number of particles to display at a time
-
-    // add particle function
-    private fun addParticle() {
-        if (particles.size >= maxParticleCount) {
-            particles.removeAt(0)
-        }
-        val particle = Particle(
-            PosX + Random.nextFloat() * Width,
-            PosY + Random.nextFloat() * Height,
-            Color.WHITE
-        )
-        particles.add(particle)
-    }
-
-
     // existing UpdateRectangle function
-
-    // new render function
-    fun render(canvas: Canvas) {
-
-        // update particles
-        updateParticles()
-
-        // draw particles
-        for (particle in particles) {
-            paint.color = particle.color
-            canvas.drawRect(
-                particle.x - 0.5f * particle.size,
-                particle.y - 0.5f * particle.size,
-                particle.x + 0.5f * particle.size,
-                particle.y + 0.5f * particle.size,
-                paint
-            )
-        }
-    }
 
     /**
      * Call this whenever RigidBody has changed position
@@ -154,9 +96,6 @@ class Rectangle(
         rectangle.left = x
         rectangle.right = x + width
     }
-
-
-
 }
 
 class AABBCollision(
@@ -188,12 +127,12 @@ class ParticleEntity(
 ) {
     // new particle properties
     private val particles = ArrayList<Particle>()
-    private val particleCount = 10
+    private val particleCount = 100
     private val particleInterval = 100 // in milliseconds
 
     private val particleHandler = android.os.Handler()
 
-    private val maxParticleCount = 50 // maximum number of particles to display at a time
+    private val maxParticleCount = 1000 // maximum number of particles to display at a time
 
     private val particleRunnable = object : Runnable {
         override fun run() {
@@ -206,11 +145,6 @@ class ParticleEntity(
 
     init {
         particleHandler.postDelayed(particleRunnable, particleInterval.toLong())
-
-        // create particles
-        for (i in 0 until particleCount) {
-            particles.add(Particle(xPos, yPos, Color.WHITE))
-        }
 
         paint = Paint().apply {
             color = colour
@@ -234,7 +168,7 @@ class ParticleEntity(
 
         val particle = Particle(
             xPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Width,
-            yPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Height,
+            yPos + Random.nextFloat() * Height,
             Color.WHITE,
             //Particle movement behaviour
             vx = Utils.NegativeOneOrNot() * Random.nextFloat() * 50f,
