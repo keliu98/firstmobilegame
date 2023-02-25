@@ -168,11 +168,14 @@ open class GameObject(
      * especially stuff like onTouchListeners.
      */
     open fun Behaviour(root: ConstraintLayout) {
-        /**
-         * Don't put anything here! For inheritance only!
-         */
+       
     }
 
+    /**
+     * By default draws a single bitmap, or if bitmap is not present, a rectangle with
+     * default paint. Child Objects can override this to Draw differently, like say if they
+     * want Animated Sprites instead (such as in Player).
+     */
     open fun Draw(canvas: Canvas, paint: Paint) {
         if (bitmap == null) {
             Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
@@ -193,7 +196,8 @@ class Obstacle(
     name: String = "GameObject",
     bitmap: Bitmap? = null,
     canvasWidth: Int,
-) : GameObject(rb, sp, name, bitmap) {
+) : GameObject(rb, sp, name, bitmap)
+{
     var obstacle_velocityX = -1200f
     var canvasW = canvasWidth
     var spacing = 1000
@@ -239,6 +243,9 @@ class Obstacle(
 
 }
 
+/**
+ * Player, inherits from GameObject.
+ */
 class Player(
     rb: RigidBody,
     sp: Rectangle,
@@ -248,7 +255,8 @@ class Player(
     ground: GameObject, //player needs to know where ground
     context: Context,
     thread: GameThread
-) : GameObject(rb, sp, name, bitmap) {
+) : GameObject(rb, sp, name, bitmap)
+{
 
     var mGround = ground
     var state = State.GROUND
@@ -341,6 +349,8 @@ class Player(
                 {
                     (context as MainActivity).runOnUiThread()
                     {
+                        //This is such bad code but it was the only way for player to access current score without
+                        //having to take in a parameter in Behaviour()
                         (context as MainActivity).showMyDialog(root.findViewWithTag<GameView>("GameView").currentScore)
                     }
                     state = State.END
@@ -370,7 +380,8 @@ class Player(
 }
 
 
-class Time {
+class Time
+{
     var elapsedTime = 0f
     var startTime = 0L
     var endTime = 0L
