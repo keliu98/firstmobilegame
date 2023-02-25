@@ -54,6 +54,7 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     lateinit var ground: GameObject
     lateinit var ball: Player
+    lateinit var particleEntity: ParticleEntity
 
     init {
         // add callback
@@ -92,6 +93,14 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
             context,
             thread
         )
+
+        particleEntity =
+            ParticleEntity(
+                150f,
+                800f,
+                100f,
+                100f,
+                Color.WHITE)
 
         /**
          * Make Obstacles
@@ -186,6 +195,8 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
             allGameObject[i].Update(deltaTime, step)
         }
 
+        particleEntity.updateParticles(deltaTime, step)
+
         if (ball.state == Player.State.DEAD || ball.state == Player.State.END) {
             for (obstacle in allObstacle)
             {
@@ -239,9 +250,15 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
+
+
         for (i in 0 until allGameObject.size) {
             allGameObject[i].Draw(canvas, paint)
         }
+
+        particleEntity.render(canvas)
+
+
 
     }
 

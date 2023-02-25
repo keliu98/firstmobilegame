@@ -178,6 +178,97 @@ class AABBCollision(
     }
 }
 
+class Particle(
+    var x: Float,
+    var y: Float,
+    val color: Int,
+    val size: Float = 10f,
+    val vx: Float = Random.nextFloat() * 200f,
+    val vy: Float = Random.nextFloat() * 200f
+)
+
+class ParticleEntity(
+    var xPos: Float,
+    var yPos: Float,
+    var Width: Float,
+    var Height: Float,
+    colour: Int
+) {
+    // new particle properties
+    private val particles = ArrayList<Particle>()
+    private val particleCount = 10
+    private val particleInterval = 10 // in milliseconds
+
+    private val particleHandler = android.os.Handler()
+
+    private val maxParticleCount = 50 // maximum number of particles to display at a time
+
+    private val particleRunnable = object : Runnable {
+        override fun run() {
+            addParticle()
+            particleHandler.postDelayed(this, particleInterval.toLong())
+        }
+    }
+
+    var paint: Paint
+
+    init {
+        particleHandler.postDelayed(particleRunnable, particleInterval.toLong())
+
+        // create particles
+        for (i in 0 until particleCount) {
+            particles.add(Particle(xPos, yPos, Color.WHITE))
+        }
+
+        paint = Paint().apply {
+            color = colour
+        }
+    }
+
+    fun updateParticles(deltaTime: Float, step: Int) {
+        for (i in 0 until step) {
+            for (particle in particles) {
+                particle.x += particle.vx * deltaTime
+                particle.y += particle.vy * deltaTime
+            }
+        }
+    }
+
+    // add particle function
+    private fun addParticle() {
+        if (particles.size >= maxParticleCount) {
+            particles.removeAt(0)
+        }
+
+        val particle = Particle(
+            xPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Width,
+            yPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Height,
+            Color.WHITE,
+            vx = Utils.NegativeOneOrNot() * Random.nextFloat() * 200f,
+            vy = Utils.NegativeOneOrNot() * Random.nextFloat() * 200f
+        )
+
+        particles.add(particle)
+    }
+
+    // new render function
+    fun render(canvas: Canvas) {
+
+        // draw particles
+        for (particle in particles) {
+            paint.color = particle.color
+            canvas.drawRect(
+                particle.x - 0.5f * particle.size,
+                particle.y - 0.5f * particle.size,
+                particle.x + 0.5f * particle.size,
+                particle.y + 0.5f * particle.size,
+                paint
+            )
+        }
+    }
+}
+
+
 open class GameObject(
     rb: RigidBody,
     sp: Rectangle,
@@ -243,11 +334,14 @@ open class GameObject(
      * especially stuff like onTouchListeners.
      */
     open fun Behaviour(root: ConstraintLayout) {
-        /**
-         * Don't put anything here! For inheritance only!
-         */
+
     }
 
+    /**
+     * By default draws a single bitmap, or if bitmap is not present, a rectangle with
+     * default paint. Child Objects can override this to Draw differently, like say if they
+     * want Animated Sprites instead (such as in Player).
+     */
     open fun Draw(canvas: Canvas, paint: Paint) {
         if (bitmap == null) {
             Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
@@ -287,8 +381,7 @@ class Obstacle(
     override fun Behaviour(root: ConstraintLayout) {
 
 
-        when(active)
-        {
+        when (active) {
             State.ACTIVE -> {
                 this.rigidBody.xVel = obstacle_velocityX
 
@@ -314,6 +407,9 @@ class Obstacle(
 
 }
 
+/**
+ * Player, inherits from GameObject.
+ */
 class Player(
     rb: RigidBody,
     sp: Rectangle,
@@ -349,7 +445,7 @@ class Player(
         END
     }
 
-    init{
+    init {
         Log.d("Ball: ", bitmap.toString())
     }
 
@@ -360,8 +456,7 @@ class Player(
     override fun Behaviour(root: ConstraintLayout) {
 
         root.setOnTouchListener { view, event ->
-            if(state != State.AIR && state != State.DEAD)
-            {
+            if (state != State.AIR && state != State.DEAD) {
                 state = State.JUMP
             }
             true // return true to indicate that the touch event has been handled
@@ -386,19 +481,15 @@ class Player(
                 this.rigidBody.yAcceleration = 0f
                 this.rigidBody.yVel = 0f
 
-                if(currentTime > animTimer)
-                {
+                if (currentTime > animTimer) {
                     frame += 1
 
-                    if(frame >= maxFrame)
-                    {
+                    if (frame >= maxFrame) {
                         frame = 0
                     }
 
                     currentTime = 0f
-                }
-                else
-                {
+                } else {
                     currentTime += thread.Time.actualDeltaTime
                 }
 
@@ -412,10 +503,12 @@ class Player(
             State.DEAD -> {
                 this.rigidBody.yAcceleration = 0.5f * gravity
 
-                if(this.rigidBody.yPos >= 5000f) //Trigger to trigger end game menu
+                if (this.rigidBody.yPos >= 5000f) //Trigger to trigger end game menu
                 {
                     (context as MainActivity).runOnUiThread()
                     {
+                        //This is such bad code but it was the only way for player to access current score without
+                        //having to take in a parameter in Behaviour()
                         (context as MainActivity).showMyDialog(root.findViewWithTag<GameView>("GameView").currentScore)
                     }
                     state = State.END
@@ -432,8 +525,7 @@ class Player(
         Log.d("Ball: ", state.toString())
     }
 
-    override fun Draw(canvas: Canvas, paint: Paint)
-    {
+    override fun Draw(canvas: Canvas, paint: Paint) {
         if (frames[frame] == null) {
             Log.d("GameObject: ", "${name}, drawing rect: ${rect.rectangle.toString()}")
             canvas.drawRect(rect.rectangle, rect.paint)
