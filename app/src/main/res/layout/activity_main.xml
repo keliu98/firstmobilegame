@@ -12,46 +12,36 @@
     tools:context="com.example.firstgame.MainActivity"
     tools:ignore="SpeakableTextPresentCheck">
 
-    <ImageView
-        android:id="@+id/ball"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/golfball"
-        app:layout_goneMarginLeft="0dp"
-        tools:ignore="MissingConstraints" />
+    <com.example.firstgame.GameView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag = "GameView"/>
 
-    <LinearLayout
-        android:id="@+id/ground"
-        android:layout_width="fill_parent"
-        android:layout_height="10dp"
-        android:layout_marginBottom="32dp"
-        android:background="@color/ground"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp" />
-
-
-    <LinearLayout
-        android:id="@+id/obstacle"
-        android:layout_width="40dp"
-        android:layout_height="121dp"
-        android:background="@color/obstacle"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/ground"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <Button
-        android:id="@+id/test_email_button"
+    <TextView
+        android:id="@+id/currentScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
+        android:layout_marginStart="348dp"
+        android:layout_marginEnd="76dp"
         android:layout_marginBottom="264dp"
-        android:text="test_Email"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.683"
+        app:layout_constraintStart_toEndOf="@+id/test_email_button" />
+
+
+<!--    <com.example.firstgame.CustomView-->
+<!--        android:id="@+id/customView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
