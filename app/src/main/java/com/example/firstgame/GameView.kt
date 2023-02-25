@@ -196,6 +196,10 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
         }
 
         particleEntity.updateParticles(deltaTime, step)
+        particleEntity.xPos = 1000f
+        particleEntity.yPos = 700f
+        particleEntity.Width = 1000f
+        particleEntity.Height = 500f
 
         if (ball.state == Player.State.DEAD || ball.state == Player.State.END) {
             for (obstacle in allObstacle)

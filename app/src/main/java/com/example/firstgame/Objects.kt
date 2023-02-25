@@ -55,14 +55,6 @@ class RigidBody(
 }
 
 
-class Particle(
-    var x: Float,
-    var y: Float,
-    val color: Int,
-    val size: Float = 10f,
-    val vx: Float = Random.nextFloat() * 2f ,
-    val vy: Float = Random.nextFloat() * 2f
-)
 
 
 class Rectangle(
