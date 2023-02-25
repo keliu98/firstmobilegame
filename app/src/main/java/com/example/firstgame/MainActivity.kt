@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var ground: LinearLayout? = null
 
 
-    private lateinit var scoreView : ScoreBoardViewModel
-    private lateinit var gameView: GameView
+    //private lateinit var scoreView : ScoreBoardViewModel
+    //private lateinit var gameView: GameView
     //private var currentScore = 0
 
     //private var scoreList = LiveData<List<ScoreboardItem>>()
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
+       //scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
 
 
         this.window.setFlags(
@@ -107,9 +107,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             currentScoreText.text = "Score: " + currentScore.toString()
             showDialog(button_test, currentScore)
         }
-
-
-
     }
 
 //    /**
@@ -121,8 +118,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 
     fun showDialog(viewWhenClicked: View, currentScore: Int) {
+        var scoreView : ScoreBoardViewModel = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
         val dialog = Dialog(this)
+
+        //dialog.setCancelable(false) <- This wont work
+
         dialog.setContentView(R.layout.popup_layout)
+
+        dialog.setCancelable(false) //must be here
 
         // Set up click listeners for any buttons in the pop-up window
         val button1 = dialog.findViewById<Button>(R.id.share_score)
@@ -163,12 +166,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         button2.setOnClickListener {
             // Do something when button 2 is clicked
+            CoroutineScope(Dispatchers.IO).launch {
+                val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
+                scoreView.insert(finalScore)
+            }
+
             val intent = Intent(this, MenuActivity::class.java)
             startActivity(intent)
-
             //dialog.dismiss() // Close the dialog when done
         }
-
         dialog.show()
     }
 
