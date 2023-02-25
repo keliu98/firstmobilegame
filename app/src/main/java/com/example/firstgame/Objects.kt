@@ -122,7 +122,7 @@ class ParticleEntity(
     // new particle properties
     private val particles = ArrayList<Particle>()
     private val particleCount = 10
-    private val particleInterval = 10 // in milliseconds
+    private val particleInterval = 100 // in milliseconds
 
     private val particleHandler = android.os.Handler()
 
@@ -169,8 +169,9 @@ class ParticleEntity(
             xPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Width,
             yPos + Utils.NegativeOneOrNot() * Random.nextFloat() * Height,
             Color.WHITE,
-            vx = Utils.NegativeOneOrNot() * Random.nextFloat() * 200f,
-            vy = Utils.NegativeOneOrNot() * Random.nextFloat() * 200f
+            //Particle movement behaviour
+            vx = Utils.NegativeOneOrNot() * Random.nextFloat() * 50f,
+            vy = Random.nextFloat() * 200f
         )
 
         particles.add(particle)
