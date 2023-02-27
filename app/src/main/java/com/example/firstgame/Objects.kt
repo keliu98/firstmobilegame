@@ -2,14 +2,9 @@ package com.example.firstgame
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
-import android.os.Looper
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import java.util.*
-import kotlin.math.max
 import kotlin.random.Random
 
 class RigidBody(
@@ -30,16 +25,12 @@ class RigidBody(
 
     fun Physics(deltaTime: Float, step: Int) {
 
-        //Log.d("Step: ", step.toString())
-
         for (i in 0 until step) {
             xVel += xAcceleration * deltaTime
             yVel += yAcceleration * deltaTime
-            //Log.d("xVel * deltaTime: ", (xVel * deltaTime).toString())
             xPos += xVel * deltaTime
             yPos += yVel * deltaTime
         }
-
     }
 
     fun SetPosition(x: Float, y: Float) {
@@ -53,8 +44,6 @@ class RigidBody(
     }
 
 }
-
-
 
 
 class Rectangle(
@@ -78,7 +67,6 @@ class Rectangle(
         rectangle = RectF()
 
         UpdateRectangle(PosX, PosY, Width, Height)
-
 
         paint = Paint().apply {
             color = colour
@@ -328,10 +316,7 @@ class Obstacle(
                 this.rigidBody.xVel = 0f
             }
         }
-
     }
-
-
 }
 
 /**

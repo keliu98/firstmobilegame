@@ -4,15 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * Database where everything is stored.
  */
 @Database(entities = [ScoreboardItem::class], version = 1, exportSchema = false)
-public abstract class ScoreBoardDatabase : RoomDatabase() {
+abstract class ScoreBoardDatabase : RoomDatabase() {
 
     abstract fun ScoreBoardDAO(): ScoreBoardDAO
 
