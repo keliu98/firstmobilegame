@@ -4,8 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 
-
-
 class ScoreBoardViewModel (application: Application) : AndroidViewModel(application) {
     private val repository: ScoreBoardRepository
     val allData: LiveData<List<ScoreboardItem>>

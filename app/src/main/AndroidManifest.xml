@@ -34,12 +34,6 @@
         </activity>
 
         <activity
-            android:name=".GameOverActivity"
-            android:exported="true"
-            android:screenOrientation="landscape">
-        </activity>
-
-        <activity
             android:name=".ScoreBoardActivity"
             android:exported="true"
             android:screenOrientation="landscape">

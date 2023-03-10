@@ -7,20 +7,13 @@ import android.content.pm.ActivityInfo
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.net.Uri
-import android.os.SystemClock
-import android.util.Log
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
@@ -38,82 +31,29 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var yVelocity = 0.0f
     private var screenWidth = 0f
     private var rotation = 0f
-    private var sensorManager: SensorManager? = null
     private var ball: ImageView? = null
     private var ground: LinearLayout? = null
 
 
-    //private lateinit var scoreView : ScoreBoardViewModel
-    //private lateinit var gameView: GameView
-    //private var currentScore = 0
-
-    //private var scoreList = LiveData<List<ScoreboardItem>>()
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
-        //Time.startTime = SystemClock.elapsedRealtime().toFloat()
-
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-       //scoreView = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
-
-
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
 
         runOnUiThread{
 
         }
 
-
-        /*
-        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        ball = findViewById<View>(R.id.ball) as ImageView
-        ground = findViewById<View>(R.id.ground) as LinearLayout
-
-        val root = findViewById<View>(R.id.main_layout) as ConstraintLayout
-
-        val currentScoreText = findViewById<TextView>(R.id.currentScore)
-        currentScoreText.text = "Score: " + currentScore.toString()
-
-        root.setOnTouchListener { view, event ->
-            if (ballIsOnTheGround()) {
-                yVelocity = -40f
-            }
-            AddScore(100)
-            Log.d("JUMP", "jumping and adding score")
-            currentScoreText.text = "Score: " + currentScore.toString()
-            true
-        }
-*/
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels.toFloat()
-
-
-//        val button_test = findViewById<Button>(R.id.test_email_button)
-//        button_test.setOnClickListener {
-//            // Add code for what should happen when button 1 is clicked
-//            val currentScore = findViewById<View>(R.id.main_layout).findViewWithTag<GameView>("GameView").currentScore
-//            val currentScoreText = findViewById<TextView>(R.id.currentScore)
-//            currentScoreText.text = "Score: " + currentScore.toString()
-//            showDialog(button_test, currentScore)
-//        }
-
     }
-
-//    /**
-//     * Adds score whenever you want
-//     */
-//    private fun AddScore(scoreToAdd :Int){
-//        currentScore += scoreToAdd
-//    }
-
 
      fun showMyDialog(currentScore: Int) {
         var scoreView : ScoreBoardViewModel = ViewModelProvider(this)[ScoreBoardViewModel::class.java] //Get the Viewmodel
@@ -133,7 +73,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         scoreView.lastScoreItem.observe(this) {
             var scoreToDisplay = ""
             if(currentScore == 0){
-                //Game hasnt started yet, display last score
+                //Game has not started yet, display last score
                 scoreToDisplay = scoreView.lastScoreItem.value?.score.toString()
                 if(scoreToDisplay == "null")
                 {
@@ -173,50 +113,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             val intent = Intent(this, MenuActivity::class.java)
             startActivity(intent)
-            //dialog.dismiss() // Close the dialog when done
         }
         dialog.show()
     }
-
-    override fun onStart() {
-        super.onStart()
-        /*
-        sensorManager!!.registerListener(
-            this, sensorManager!!.getDefaultSensor(
-                Sensor.TYPE_ACCELEROMETER
-            ), SensorManager.SENSOR_DELAY_GAME
-        )
-
-         */
-    }
-
-    override fun onStop() {
-        /*
-        sensorManager!!.unregisterListener(this)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val finalScore = ScoreboardItem(name = "Player" ,score = currentScore, date = Utils.FormatDate(Date()))
-            scoreView.insert(finalScore)
-        }
-
-         */
-
-        super.onStop()
-    }
-
-
 
     override fun onSensorChanged(sensorEvent: SensorEvent) {
         updateXAccel(sensorEvent)
         updateX()
         updateY()
-        //ball!!.x = xPos
         ball!!.y = yPos
         rotation += xVelocity / 2.5f
         ball!!.rotation = rotation
     }
-
-
 
     fun updateXAccel(sensorEvent: SensorEvent) {
         xAcceleration = -sensorEvent.values[1]
@@ -274,8 +182,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun ballIsHittingTheGround(): Boolean {
         return ballBottomSideWithSpeed() > ground!!.y
     }
-
-
 
     override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
 }

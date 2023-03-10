@@ -1,9 +1,7 @@
 package com.example.firstgame
 
-import androidx.room.DatabaseView
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.text.SimpleDateFormat
 import java.util.*
 
 //This class represents a single item in the scoreboard.
@@ -19,12 +17,6 @@ data class ScoreboardItem(
     //Store as a string to prevent future complications. Basic Data Types are always easier.
     val date: String,
 ) {
-    //Removed for now as it is up to user to convert Date to string.
-
-//    fun formatDate(): String {
-//        val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-//        return formatter.format(date)
-//    }
 
 }
 

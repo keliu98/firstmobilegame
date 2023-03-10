@@ -44,5 +44,4 @@ class Utils private constructor() {
             return negativeOneOrNot
         }
     }
-
 }

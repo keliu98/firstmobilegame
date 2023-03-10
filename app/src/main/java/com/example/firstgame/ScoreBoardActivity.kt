@@ -1,9 +1,7 @@
 package com.example.firstgame
 
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +17,7 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var scoreboardAdapter: ScoreBoardAdapter
-    public  lateinit var scoresList: MutableList<ScoreboardItem>
+    lateinit var scoresList: MutableList<ScoreboardItem>
     private val viewModel: ScoreBoardViewModel by viewModels()
 
 
@@ -30,28 +28,6 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
 
         // Initialize scores list
         scoresList = mutableListOf()
-//
-//        for (i in 1..20) {
-//            val currentDate = Date()
-//            scoresList.add(
-//                ScoreboardItem(
-//                name ="Player $i",
-//                score = (i * 1000),
-//                date = formatDate(currentDate)
-//                )
-//            )
-//        }
-//
-//        /**
-//         * Inserts scores into database
-//         */
-//        for(i in 0 until scoresList.size)
-//        {
-//            Log.d("Add Score Item: ", scoresList[i].score.toString() )
-//            CoroutineScope(Dispatchers.IO).launch {
-//                viewModel.insert(scoresList[i])
-//            }
-//        }
 
         // Set up recycler view
         recyclerView = findViewById(R.id.score_cycle)
@@ -79,12 +55,6 @@ class ScoreBoardActivity : AppCompatActivity(), java.io.Serializable {
             scoreboardAdapter.setScoreBoardWithIndex(it)
         }
     }
-
-//    fun startMainActivity() {
-//        val intent = Intent(this, MainActivity::class.java)
-//        intent.putExtra("myList", scoresList as java.io.Serializable)
-//        startActivity(intent)
-//    }
 
     /**
      * Helper function to convert Data to String.
